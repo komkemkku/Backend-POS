@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
+	"Backend-POS/model"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
-	"Backend-POS/models"
 )
 
 func VerifyToken(raw string) (map[string]any, error) {
@@ -35,7 +35,7 @@ func VerifyToken(raw string) (map[string]any, error) {
 	return nil, errors.New("invalid token claims")
 }
 
-func GenerateTokenUser(ctx context.Context, user *models.Users) (string, error) {
+func GenerateTokenStaff(ctx context.Context, staff *model.Staff) (string, error) {
 	godotenv.Load()
 	tokenDurationStr := os.Getenv("TOKEN_DURATION")
 	tokenDuration, err := time.ParseDuration(tokenDurationStr)
@@ -46,9 +46,9 @@ func GenerateTokenUser(ctx context.Context, user *models.Users) (string, error) 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 
 		"sub": jwt.MapClaims{
-			"id":       user.ID,
-			"username": user.Username,
-			"password": user.Password,
+			"id":            staff.ID,
+			"username":      staff.UserName,
+			"password_hash": staff.PasswordHash,
 		},
 		"nbf": time.Now().Unix(),
 		"exp": time.Now().Add(tokenDuration).Unix(),
@@ -63,30 +63,30 @@ func GenerateTokenUser(ctx context.Context, user *models.Users) (string, error) 
 	return tokenString, nil
 }
 
-func GenerateTokenAdmin(ctx context.Context, admin *models.Admins) (string, error) {
-	godotenv.Load()
-	tokenDurationStr := os.Getenv("TOKEN_DURATION")
-	tokenDuration, err := time.ParseDuration(tokenDurationStr)
-	if err != nil {
-		log.Printf("[error]: %v", err)
-		return "", err
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+// func GenerateTokenAdmin(ctx context.Context, admin *model.Admins) (string, error) {
+// 	godotenv.Load()
+// 	tokenDurationStr := os.Getenv("TOKEN_DURATION")
+// 	tokenDuration, err := time.ParseDuration(tokenDurationStr)
+// 	if err != nil {
+// 		log.Printf("[error]: %v", err)
+// 		return "", err
+// 	}
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 
-		"sub": jwt.MapClaims{
-			"id":       admin.ID,
-			"name":     admin.Name,
-			"password": admin.Password,
-		},
-		"nbf": time.Now().Unix(),
-		"exp": time.Now().Add(tokenDuration).Unix(),
-	})
+// 		"sub": jwt.MapClaims{
+// 			"id":       admin.ID,
+// 			"name":     admin.Name,
+// 			"password": admin.Password,
+// 		},
+// 		"nbf": time.Now().Unix(),
+// 		"exp": time.Now().Add(tokenDuration).Unix(),
+// 	})
 
-	secret := []byte(os.Getenv("TOKEN_SECRET"))
-	tokenString, err := token.SignedString(secret)
-	if err != nil {
-		log.Printf("[error]: %v", err)
-		return "", err
-	}
-	return tokenString, nil
-}
+// 	secret := []byte(os.Getenv("TOKEN_SECRET"))
+// 	tokenString, err := token.SignedString(secret)
+// 	if err != nil {
+// 		log.Printf("[error]: %v", err)
+// 		return "", err
+// 	}
+// 	return tokenString, nil
+// }

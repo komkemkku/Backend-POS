@@ -1,14 +1,11 @@
 package migrations
 
-import "Backend-POS/models"
-
+import "Backend-POS/model"
 
 func Models() []any {
 	return []any{
 
-		(*models.Users)(nil),
-		(*models.Admins)(nil),
-
+		(*model.Staff)(nil),
 	}
 }
 
