@@ -12,5 +12,5 @@ type Reservations struct {
 	Status          string `bun:"status"`                        // Status of the reservation (e.g., "pending", "confirmed", "cancelled")
 	Notes           string `bun:"notes"`                         // Additional notes for the reservation
 
-	CreatedAt int64 `bun:"created_at"` // Timestamp for when the reservation was created
+	CreateUnixTimestamp
 }

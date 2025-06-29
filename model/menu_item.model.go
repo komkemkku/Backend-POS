@@ -13,6 +13,6 @@ type MenuItems struct {
 	ImageURL    string  `bun:"image_url"`    // URL of the image for the menu
 	IsAvailable bool    `bun:"is_available"` // Availability status of the menu item
 
-	CreatedAt int64 `bun:"created_at"`
-	UpdatedAt int64 `bun:"updated_at"`
+	CreateUnixTimestamp
+	UpdateUnixTimestamp
 }

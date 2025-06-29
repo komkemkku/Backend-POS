@@ -11,6 +11,6 @@ type Staff struct {
 	FullName     string `bun:"full_name"`
 	Role         string `bun:"role"`
 
-	CreatedAt int64 `bun:"created_at"`
-	UpdatedAt int64 `bun:"updated_at"`
+	CreateUnixTimestamp
+	UpdateUnixTimestamp
 }

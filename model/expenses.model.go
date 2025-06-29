@@ -11,5 +11,5 @@ type Expenses struct {
 	ExpenseDate   int64   `bun:"expense_date"`                  // Date of the expense in Unix timestamp format
 	StaffID       int     `bun:"staff_id"`                      // Foreign key to Staff table
 
-	CreatedAt int64 `bun:"created_at"` // Timestamp for when the expense was created
+	CreateUnixTimestamp
 }
