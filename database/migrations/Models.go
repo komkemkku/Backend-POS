@@ -6,6 +6,14 @@ func Models() []any {
 	return []any{
 
 		(*model.Staff)(nil),
+		(*model.Categories)(nil),
+		(*model.Expenses)(nil),
+		(*model.MenuItems)(nil),
+		(*model.Orders)(nil),
+		(*model.OrderItems)(nil),
+		(*model.Payments)(nil),
+		(*model.Reservations)(nil),
+		(*model.Tables)(nil),
 	}
 }
 

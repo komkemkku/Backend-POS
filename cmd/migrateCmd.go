@@ -11,8 +11,7 @@ import (
 // Migrate Command
 func Migrate() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "migrate",
-		Args: NotReqArgs,
+		Use: "migrate",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			return config.Open(cmd.Context())
 		},
@@ -32,7 +31,7 @@ func Migrate() *cobra.Command {
 func migrateUp() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "up",
-		Args: NotReqArgs,
+		Args: cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			db := config.Database()
 			if err := modelUp(db); err != nil {
@@ -48,7 +47,7 @@ func migrateUp() *cobra.Command {
 func migrateDown() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "down",
-		Args: NotReqArgs,
+		Args: cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			db := config.Database()
 			if err := modelDown(db); err != nil {
@@ -65,7 +64,7 @@ func migrateDown() *cobra.Command {
 func migrateRefresh() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "refresh",
-		Args: NotReqArgs,
+		Args: cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			db := config.Database()
 			if err := modelDown(db); err != nil {
