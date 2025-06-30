@@ -5,14 +5,14 @@ type ExpenseResponses struct {
 	Description string                `json:"description"`
 	Amount      float64               `json:"amount"`
 	Category    string                `json:"category"`
-	ExpenseDate string                `json:"expense_date"`
-	StaffID     StaffExpenseResponses `json:"staff"`
+	ExpenseDate string                `json:"expense_date"` // ถ้าอยากให้เป็น int เปลี่ยนตรงนี้
 	CreatedAt   int64                 `json:"created_at"`
+	StaffID     StaffExpenseResponses `json:"staff"`
 }
 
 type StaffExpenseResponses struct {
-	StaffID       int    `json:"staff_id"`
-	StaffUsername string `json:"staff_username"`
-	StaffFullName string `json:"staff_full_name"`
-	StaffRole     string `json:"staff_role"`
+	ID       int    `json:"staff_id"`
+	Username string `json:"staff_username"`
+	FullName string `json:"staff_full_name"`
+	Role     string `json:"staff_role"`
 }

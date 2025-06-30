@@ -64,14 +64,24 @@ func CreateExpense(c *gin.Context) {
 
 func UpdateExpense(c *gin.Context) {
 	staff := c.GetInt("staff_id")
-	req := requests.ExpenseUpdateRequest{}
-	if err := c.BindJSON(&req); err != nil {
+
+	// รับ id จาก url param
+	var uri struct {
+		ID int `uri:"id" binding:"required"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		response.BadRequest(c, err.Error())
+		return
+	}
+
+	var req requests.ExpenseUpdateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, err.Error())
 		return
 	}
 	req.StaffID = staff
 
-	data, err := UpdateExpenseService(c, req.ID, req)
+	data, err := UpdateExpenseService(c, uri.ID, req)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return
@@ -80,13 +90,15 @@ func UpdateExpense(c *gin.Context) {
 }
 
 func DeleteExpense(c *gin.Context) {
-	id := requests.ExpenseDeleteRequest{}
-	if err := c.BindJSON(&id); err != nil {
+	var uri struct {
+		ID int `uri:"id" binding:"required"`
+	}
+	if err := c.ShouldBindUri(&uri); err != nil {
 		response.BadRequest(c, err.Error())
 		return
 	}
 
-	err := DeleteExpenseService(c.Request.Context(), id.ID)
+	err := DeleteExpenseService(c.Request.Context(), uri.ID)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return

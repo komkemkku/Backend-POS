@@ -7,27 +7,40 @@ import (
 	response "Backend-POS/responses"
 	"context"
 	"errors"
+	"strconv"
 )
 
 var db = config.Database()
 
-func ListExpenseService(ctx context.Context, req requests.ExpenseRequest) ([]response.ExpenseResponses, int, error) {
+type ExpenseWithStaffFlat struct {
+	ID          int
+	Description string
+	Amount      float64
+	Category    string
+	ExpenseDate int
+	CreatedAt   int64
 
+	StaffID       int
+	StaffUsername string
+	StaffFullName string
+	StaffRole     string
+}
+
+func ListExpenseService(ctx context.Context, req requests.ExpenseRequest) ([]response.ExpenseResponses, int, error) {
 	var Offset int64
 	if req.Page > 0 {
 		Offset = (req.Page - 1) * req.Size
 	}
 
-	resp := []response.ExpenseResponses{}
+	var temp []ExpenseWithStaffFlat
 
 	// สร้าง query
 	query := db.NewSelect().
 		TableExpr("expenses AS e").
 		Column(
-			"e.id", "e.description", "e.amount", "e.category", "e.expense_date", "e.created_at").
-		ColumnExpr(
-			"s.id AS staff_id", "s.username AS staff_username", "s.full_name AS staff_full_name", "s.role AS staff_role",
+			"e.id", "e.description", "e.amount", "e.category", "e.expense_date", "e.created_at",
 		).
+		ColumnExpr("s.id AS staff_id, s.username AS staff_username, s.full_name AS staff_full_name, s.role AS staff_role").
 		Join("LEFT JOIN staff s ON e.staff_id = s.id")
 
 	if req.Search != "" {
@@ -39,26 +52,25 @@ func ListExpenseService(ctx context.Context, req requests.ExpenseRequest) ([]res
 		return nil, 0, err
 	}
 
-	// Execute query
-	err = query.OrderExpr("e.category DESC").Offset(int(Offset)).Limit(int(req.Size)).Scan(ctx, &resp)
+	err = query.OrderExpr("e.category DESC").Offset(int(Offset)).Limit(int(req.Size)).Scan(ctx, &temp)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	resp = make([]response.ExpenseResponses, len(resp))
-	for i, e := range resp {
+	resp := make([]response.ExpenseResponses, len(temp))
+	for i, e := range temp {
 		resp[i] = response.ExpenseResponses{
 			ID:          e.ID,
 			Description: e.Description,
 			Amount:      e.Amount,
 			Category:    e.Category,
-			ExpenseDate: e.ExpenseDate,
+			ExpenseDate: strconv.Itoa(e.ExpenseDate),
 			CreatedAt:   e.CreatedAt,
 			StaffID: response.StaffExpenseResponses{
-				StaffID:       e.StaffID.StaffID,
-				StaffUsername: e.StaffID.StaffUsername,
-				StaffFullName: e.StaffID.StaffFullName,
-				StaffRole:     e.StaffID.StaffRole,
+				ID:       e.StaffID,
+				Username: e.StaffUsername,
+				FullName: e.StaffFullName,
+				Role:     e.StaffRole,
 			},
 		}
 	}
@@ -75,21 +87,50 @@ func GetByIdExpenseService(ctx context.Context, ID int) (*response.ExpenseRespon
 		return nil, errors.New("expenses not found")
 	}
 
-	expense := &response.ExpenseResponses{}
+	// Struct สำหรับรับค่าจาก DB (flat)
+	type ExpenseWithStaffFlat struct {
+		ID            int
+		Description   string
+		Amount        float64
+		Category      string
+		ExpenseDate   int
+		CreatedAt     int64
+		StaffID       int
+		StaffUsername string
+		StaffFullName string
+		StaffRole     string
+	}
+
+	var temp ExpenseWithStaffFlat
 
 	// สร้าง query
 	err = db.NewSelect().
 		TableExpr("expenses AS e").
 		Column(
-			"e.id", "e.description", "e.amount", "e.category", "e.expense_date", "e.created_at").
-		ColumnExpr(
-			"s.id AS staff_id", "s.username AS staff_username", "s.full_name AS staff_full_name", "s.role AS staff_role",
+			"e.id", "e.description", "e.amount", "e.category", "e.expense_date", "e.created_at",
 		).
+		ColumnExpr("s.id AS staff_id, s.username AS staff_username, s.full_name AS staff_full_name, s.role AS staff_role").
 		Join("LEFT JOIN staff s ON e.staff_id = s.id").
-		Where("id = ?", ID).
-		Scan(ctx, expense)
+		Where("e.id = ?", ID). // ต้องระบุ table alias "e.id"
+		Scan(ctx, &temp)
 	if err != nil {
 		return nil, err
+	}
+
+	// Map ไป struct response ที่ nested
+	expense := &response.ExpenseResponses{
+		ID:          temp.ID,
+		Description: temp.Description,
+		Amount:      temp.Amount,
+		Category:    temp.Category,
+		ExpenseDate: strconv.Itoa(temp.ExpenseDate),
+		CreatedAt:   temp.CreatedAt,
+		StaffID: response.StaffExpenseResponses{
+			ID:       temp.StaffID,
+			Username: temp.StaffUsername,
+			FullName: temp.StaffFullName,
+			Role:     temp.StaffRole,
+		},
 	}
 
 	return expense, nil
@@ -126,6 +167,7 @@ func UpdateExpenseService(ctx context.Context, ID int, req requests.ExpenseUpdat
 		return nil, errors.New("expense not found")
 	}
 
+	// 2. Prepare struct สำหรับ update
 	expense := &model.Expenses{
 		ID:          ID,
 		Description: req.Description,
@@ -134,17 +176,21 @@ func UpdateExpenseService(ctx context.Context, ID int, req requests.ExpenseUpdat
 		ExpenseDate: req.ExpenseDate,
 		StaffID:     req.StaffID,
 	}
+	expense.SetCreatedNow()
 
+	// 3. Update ข้อมูล
 	_, err = db.NewUpdate().Model(expense).WherePK().Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
 
+	// 4. Return รายการล่าสุด (join ข้อมูล staff ด้วย)
 	return GetByIdExpenseService(ctx, ID)
 }
 
 func DeleteExpenseService(ctx context.Context, ID int) error {
-	ex, err := db.NewSelect().Table("expenses").Where("id = ?", ID).Exists(ctx)
+	// 1. ตรวจสอบว่า expense มีจริงไหม
+	ex, err := db.NewSelect().Model((*model.Expenses)(nil)).Where("id = ?", ID).Exists(ctx)
 	if err != nil {
 		return err
 	}
@@ -152,6 +198,7 @@ func DeleteExpenseService(ctx context.Context, ID int) error {
 		return errors.New("expense not found")
 	}
 
+	// 2. ลบข้อมูล
 	_, err = db.NewDelete().Model((*model.Expenses)(nil)).Where("id = ?", ID).Exec(ctx)
 	if err != nil {
 		return err
