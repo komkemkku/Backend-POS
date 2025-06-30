@@ -13,12 +13,12 @@ type CategoryIdRequest struct {
 type CategoryCreateRequest struct {
 	Name         string `json:"name"`
 	Description  string `json:"description"`
-	DisplayOrder int    `json:"display_order"`
+	DisplayOrder string    `json:"display_order"`
 }
 
 type CategoryUpdateRequest struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`
 	Description  string `json:"description"`
-	DisplayOrder int    `json:"display_order"`
+	DisplayOrder string    `json:"display_order"`
 }
