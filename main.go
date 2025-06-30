@@ -6,7 +6,13 @@ import (
 	"Backend-POS/controller/auth"
 	"Backend-POS/controller/categories"
 	"Backend-POS/controller/expense"
+	menuitem "Backend-POS/controller/menu_item"
+	"Backend-POS/controller/order"
+	orderitem "Backend-POS/controller/order_item"
+	"Backend-POS/controller/payment"
+	"Backend-POS/controller/reservation"
 	"Backend-POS/controller/staff"
+	"Backend-POS/controller/table"
 	"Backend-POS/middlewares"
 	"log"
 	"os"
@@ -63,6 +69,48 @@ func main() {
 	r.POST("/expenses/create", md, expense.CreateExpense)
 	r.PATCH("/expenses/:id", md, expense.UpdateExpense)
 	r.DELETE("/expenses/:id", md, expense.DeleteExpense)
+
+	// Menu Item endpoints
+	r.GET("/menu-items", md, menuitem.ListMenuItems)
+	r.GET("/menu-items/:id", md, menuitem.GetMenuItemByID)
+	r.POST("/menu-items/create", md, menuitem.CreateMenuItem)
+	r.PATCH("/menu-items/:id", md, menuitem.UpdateMenuItem)
+	r.DELETE("/menu-items/:id", md, menuitem.DeleteMenuItem)
+
+	// Order endpoints
+	r.GET("/orders", md, order.ListOrders)
+	r.GET("/orders/:id", md, order.GetOrderById)
+	r.POST("/orders/create", md, order.CreateOrder)
+	r.PATCH("/orders/:id", md, order.UpdateOrder)
+	r.DELETE("/orders/:id", md, order.DeleteOrder)
+
+	// Order Item endpoints
+	r.GET("/order-items", md, orderitem.ListOrderItems)
+	r.GET("/order-items/:id", md, orderitem.GetOrderItemById)
+	r.POST("/order-items/create", md, orderitem.CreateOrderItem)
+	r.PATCH("/order-items/:id", md, orderitem.UpdateOrderItem)
+	r.DELETE("/order-items/:id", md, orderitem.DeleteOrderItem)
+
+	// Payment endpoints
+	r.GET("/payments", md, payment.ListPayments)
+	r.GET("/payments/:id", md, payment.GetPaymentById)
+	r.POST("/payments/create", md, payment.CreatePayment)
+	r.PATCH("/payments/:id", md, payment.UpdatePayment)
+	r.DELETE("/payments/:id", md, payment.DeletePayment)
+
+	// Reservation endpoints
+	r.GET("/reservations", md, reservation.ListReservations)
+	r.GET("/reservations/:id", md, reservation.GetReservationById)
+	r.POST("/reservations/create", md, reservation.CreateReservation)
+	r.PATCH("/reservations/:id", md, reservation.UpdateReservation)
+	r.DELETE("/reservations/:id", md, reservation.DeleteReservation)
+
+	// Table endpoints
+	r.GET("/tables", md, table.ListTables)
+	r.GET("/tables/:id", md, table.GetTableById)
+	r.POST("/tables/create", md, table.CreateTable)
+	r.PATCH("/tables/:id", md, table.UpdateTable)
+	r.DELETE("/tables/:id", md, table.DeleteTable)
 
 	r.Run(":8080")
 }

@@ -16,7 +16,7 @@ type ReservationCreateRequest struct {
 	CustomerPhone   string `json:"customer_phone"`
 	ReservationTime string `json:"reservation_time"`
 	NumberOfGuests  int    `json:"number_of_guests"`
-	Ststus          string `json:"status"`
+	Status          string `json:"status"`
 	Notes           string `json:"notes"`
 }
 

@@ -11,22 +11,22 @@ type MenuItemIdRequest struct {
 }
 
 type MenuItemCreateRequest struct {
-	CategoryID  int    `json:"category_id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Price       int    `json:"price"`
-	ImageUrl    string `json:"image_url"`
-	IsAvailable bool   `json:"is_available"`
+	CategoryID  int     `json:"category_id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	ImageUrl    string  `json:"image_url"`
+	IsAvailable bool    `json:"is_available"`
 }
 
 type MenuItemUpdateRequest struct {
-	ID          int    `json:"id"`
-	CategoryID  int    `json:"category_id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Price       int    `json:"price"`
-	ImageUrl    string `json:"image_url"`
-	IsAvailable bool   `json:"is_available"`
+	ID          int     `json:"id"`
+	CategoryID  int     `json:"category_id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	ImageUrl    string  `json:"image_url"`
+	IsAvailable bool    `json:"is_available"`
 }
 
 type MenuItemDeleteRequest struct {

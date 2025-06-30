@@ -11,20 +11,20 @@ type OrderItemIdRequest struct {
 }
 
 type OrderItemCreateRequest struct {
-	OrderID      int    `json:"order_id"`
-	MenuItemID   int    `json:"menu_item_id"`
-	Quantity     int    `json:"quantity"`
-	PricePerItem int    `json:"price_per_item"`
-	Notes        string `json:"notes"`
+	OrderID      int     `json:"order_id"`
+	MenuItemID   int     `json:"menu_item_id"`
+	Quantity     int     `json:"quantity"`
+	PricePerItem float64 `json:"price_per_item"`
+	Notes        string  `json:"notes"`
 }
 
 type OrderItemUpdateRequest struct {
-	ID           int    `json:"id"`
-	OrderID      int    `json:"order_id"`
-	MenuItemID   int    `json:"menu_item_id"`
-	Quantity     int    `json:"quantity"`
-	PricePerItem int    `json:"price_per_item"`
-	Notes        string `json:"notes"`
+	ID           int     `json:"id"`
+	OrderID      int     `json:"order_id"`
+	MenuItemID   int     `json:"menu_item_id"`
+	Quantity     int     `json:"quantity"`
+	PricePerItem float64 `json:"price_per_item"`
+	Notes        string  `json:"notes"`
 }
 
 type OrderItemDeleteRequest struct {

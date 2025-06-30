@@ -11,18 +11,18 @@ type PaymentIdRequest struct {
 }
 
 type PaymentCreateRequest struct {
-	OrderID         int    `json:"order_id"`
-	PaymentMethod   string `json:"payment_method"`
-	AmountPaid      int    `json:"amount_paid"`
-	TransactionTime string `json:"transaction_time"`
+	OrderID         int     `json:"order_id"`
+	PaymentMethod   string  `json:"payment_method"`
+	AmountPaid      float64 `json:"amount_paid"`
+	TransactionTime string  `json:"transaction_time"` // ใช้ string เพื่อรับ input (ต้อง parse ภายหลัง)
 }
 
 type PaymentUpdateRequest struct {
-	ID              int    `json:"id"`
-	OrderID         int    `json:"order_id"`
-	PaymentMethod   string `json:"payment_method"`
-	AmountPaid      int    `json:"amount_paid"`
-	TransactionTime string `json:"transaction_time"`
+	ID              int     `json:"id"`
+	OrderID         int     `json:"order_id"`
+	PaymentMethod   string  `json:"payment_method"`
+	AmountPaid      float64 `json:"amount_paid"`
+	TransactionTime string  `json:"transaction_time"`
 }
 
 type PaymentDeleteRequest struct {

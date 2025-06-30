@@ -14,7 +14,7 @@ type OrderCreateRequest struct {
 	TableID     int    `json:"table_id"`
 	StaffID     int    `json:"staff_id"`
 	Status      string `json:"status"`
-	TotalAmount int    `json:"total_amount"`
+	TotalAmount float64    `json:"total_amount"`
 }
 
 type OrderUpdateRequest struct {
@@ -22,7 +22,7 @@ type OrderUpdateRequest struct {
 	TableID     int    `json:"table_id"`
 	StaffID     int    `json:"staff_id"`
 	Status      string `json:"status"`
-	TotalAmount int    `json:"total_amount"`
+	TotalAmount float64    `json:"total_amount"`
 }
 
 type OrderDeleteRequest struct {
