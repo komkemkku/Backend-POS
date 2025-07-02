@@ -86,12 +86,17 @@ func UpdateTable(c *gin.Context) {
 }
 
 func DeleteTable(c *gin.Context) {
-	var req requests.TableDeleteRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		response.BadRequest(c, err.Error())
+	idParam := c.Param("id")
+	if idParam == "" {
+		response.BadRequest(c, "ต้องระบุ id")
 		return
 	}
-	err := DeleteTableService(c.Request.Context(), req.ID)
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		response.BadRequest(c, "id ไม่ถูกต้อง")
+		return
+	}
+	err = DeleteTableService(c.Request.Context(), id)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return
