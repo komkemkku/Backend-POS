@@ -6,6 +6,7 @@ import (
 	"Backend-POS/requests"
 	response "Backend-POS/responses"
 	"context"
+	"fmt"
 )
 
 var db = config.Database()
@@ -79,9 +80,13 @@ func UpdateTableService(ctx context.Context, id int, req requests.TableUpdateReq
 		Status:           req.Status,
 		QrCodeIdentifier: req.QrCodeIdentifier,
 	}
-	_, err := db.NewUpdate().Model(table).WherePK().Exec(ctx)
+	res, err := db.NewUpdate().Model(table).WherePK().Exec(ctx)
 	if err != nil {
 		return nil, err
+	}
+	rowsAffected, _ := res.RowsAffected()
+	if rowsAffected == 0 {
+		return nil, fmt.Errorf("ไม่พบโต๊ะที่ต้องการแก้ไข")
 	}
 	return GetTableByIdService(ctx, id)
 }

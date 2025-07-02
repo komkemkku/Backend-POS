@@ -4,6 +4,7 @@ import (
 	"Backend-POS/model"
 	"Backend-POS/requests"
 	response "Backend-POS/responses"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -61,6 +62,20 @@ func UpdateTable(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, err.Error())
 		return
+	}
+	idParam := c.Param("id")
+	if idParam == "" && req.ID == 0 {
+		response.BadRequest(c, "ต้องระบุ id")
+		return
+	}
+	// แปลง id จาก param เป็น int ถ้ามี
+	if idParam != "" {
+		id, err := strconv.Atoi(idParam)
+		if err != nil {
+			response.BadRequest(c, "id ไม่ถูกต้อง")
+			return
+		}
+		req.ID = id
 	}
 	data, err := UpdateTableService(c.Request.Context(), req.ID, req)
 	if err != nil {
