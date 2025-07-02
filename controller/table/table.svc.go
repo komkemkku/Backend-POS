@@ -59,11 +59,12 @@ func GetTableByIdService(ctx context.Context, id int) (*response.TableResponses,
 }
 
 func CreateTableService(ctx context.Context, req requests.TableCreateRequest) (*response.TableResponses, error) {
+	qrCode := fmt.Sprintf("A%d", req.TableNumber)
 	table := &model.Tables{
 		TableNumber:      req.TableNumber,
 		Capacity:         req.Capacity,
 		Status:           req.Status,
-		QrCodeIdentifier: req.QrCodeIdentifier,
+		QrCodeIdentifier: qrCode,
 	}
 	_, err := db.NewInsert().Model(table).Exec(ctx)
 	if err != nil {
@@ -73,12 +74,13 @@ func CreateTableService(ctx context.Context, req requests.TableCreateRequest) (*
 }
 
 func UpdateTableService(ctx context.Context, id int, req requests.TableUpdateRequest) (*response.TableResponses, error) {
+	qrCode := fmt.Sprintf("A%d", req.TableNumber)
 	table := &model.Tables{
 		ID:               id,
 		TableNumber:      req.TableNumber,
 		Capacity:         req.Capacity,
 		Status:           req.Status,
-		QrCodeIdentifier: req.QrCodeIdentifier,
+		QrCodeIdentifier: qrCode,
 	}
 	res, err := db.NewUpdate().Model(table).WherePK().Exec(ctx)
 	if err != nil {
