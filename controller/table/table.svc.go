@@ -90,3 +90,32 @@ func DeleteTableService(ctx context.Context, id int) error {
 	_, err := db.NewDelete().Model((*model.Tables)(nil)).Where("id = ?", id).Exec(ctx)
 	return err
 }
+
+// PublicGetMenuByQrCodeService ดึงเมนูอาหารสำหรับลูกค้าที่สแกน QR Code โต๊ะ (public)
+func PublicGetMenuByQrCodeService(ctx context.Context, qrCodeIdentifier string) ([]response.MenuItemResponses, error) {
+	var table model.Tables
+	err := db.NewSelect().Model(&table).Where("qr_code_identifier = ?", qrCodeIdentifier).Scan(ctx)
+	if err != nil {
+		return nil, err // ไม่พบโต๊ะ
+	}
+
+	var menus []model.MenuItems
+	err = db.NewSelect().Model(&menus).Where("is_available = true").Order("category_id, id").Scan(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	menuResp := make([]response.MenuItemResponses, len(menus))
+	for i, m := range menus {
+		menuResp[i] = response.MenuItemResponses{
+			ID:          m.ID,
+			CategoryID:  m.CategoryID,
+			Name:        m.Name,
+			Description: m.Description,
+			Price:       m.Price,
+			ImageUrl:    m.ImageURL,
+			IsAvailable: m.IsAvailable,
+		}
+	}
+	return menuResp, nil
+}

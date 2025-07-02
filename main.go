@@ -112,5 +112,8 @@ func main() {
 	r.PATCH("/tables/:id", md, table.UpdateTable)
 	r.DELETE("/tables/:id", md, table.DeleteTable)
 
+	// Public endpoint สำหรับลูกค้าสแกน QR Code โต๊ะเพื่อดูเมนู
+	r.GET("/public/menu/:qrCodeIdentifier", table.PublicMenuByQrCode)
+
 	r.Run(":8080")
 }
