@@ -8,12 +8,11 @@ import (
 	"time"
 
 	"Backend-POS/model"
+
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 )
 
 func VerifyToken(raw string) (map[string]any, error) {
-	godotenv.Load()
 	token, err := jwt.Parse(raw, func(token *jwt.Token) (
 		interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -36,7 +35,6 @@ func VerifyToken(raw string) (map[string]any, error) {
 }
 
 func GenerateTokenStaff(ctx context.Context, staff *model.Staff) (string, error) {
-	godotenv.Load()
 	tokenDurationStr := os.Getenv("TOKEN_DURATION")
 	tokenDuration, err := time.ParseDuration(tokenDurationStr)
 	if err != nil {
