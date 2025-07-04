@@ -115,7 +115,6 @@ func main() {
 	r.POST("/tables/create", md, table.CreateTable)
 	r.PATCH("/tables/:id", md, table.UpdateTable)
 	r.DELETE("/tables/:id", md, table.DeleteTable)
-
 	// ===== PUBLIC ENDPOINTS สำหรับลูกค้า (ไม่ต้อง auth) =====
 
 	// Public - สแกน QR Code โต๊ะเพื่อดูเมนู
@@ -126,6 +125,30 @@ func main() {
 
 	// Public - สร้างออเดอร์ (ลูกค้าสั่งอาหาร)
 	r.POST("/public/orders/create", order.PublicCreateOrder)
+
+	// Public - ดูประวัติออเดอร์ตามโต๊ะ (เฉพาะยังไม่ชำระเงิน)
+	r.GET("/public/orders/table/:qrCodeIdentifier", order.PublicGetOrdersByTable)
+
+	// Public - ดูสถานะออเดอร์เฉพาะ
+	r.GET("/public/orders/:orderID/table/:qrCodeIdentifier", order.PublicGetOrderStatus)
+
+	// Public - ดูประวัติออเดอร์ทั้งหมด (รวมที่ชำระแล้ว)
+	r.GET("/public/orders/history/:qrCodeIdentifier", order.PublicGetAllOrderHistory)
+
+	// Public - ดูสรุปโต๊ะ
+	r.GET("/public/table/summary/:qrCodeIdentifier", order.PublicGetTableSummary)
+
+	// Staff - ล้างประวัติโต๊ะหลังชำระเงิน (ต้อง auth)
+	r.POST("/staff/orders/clear-table/:qrCodeIdentifier", md, order.PublicClearTableHistory)
+
+	// Staff - ล้างประวัติแบบละเอียด (เพิ่มฟีเจอร์)
+	r.POST("/staff/orders/advanced-clear/:qrCodeIdentifier", md, order.AdvancedClearTableHistory)
+
+	// Staff - ยกเลิกออเดอร์เฉพาะ
+	r.POST("/staff/orders/cancel/:orderID/table/:qrCodeIdentifier", md, order.CancelSpecificOrder)
+
+	// Staff - อัปเดตสถานะออเดอร์
+	r.PATCH("/staff/orders/:orderID/status", md, order.UpdateOrderStatus)
 
 	// Health check endpoint
 	r.GET("/health", func(c *gin.Context) {
