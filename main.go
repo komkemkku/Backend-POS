@@ -32,15 +32,18 @@ func main() {
 	log.Println("Database connected successfully")
 	r := gin.Default()
 
+	// ปรับ CORS สำหรับ production และรองรับ Vercel
 	r.Use(cors.New(cors.Config{
-		AllowAllOrigins:        true,
-		AllowMethods:           []string{"*"},
-		AllowHeaders:           []string{"*"},
-		AllowCredentials:       true,
-		AllowWildcard:          true,
-		AllowBrowserExtensions: true,
-		AllowWebSockets:        true,
-		AllowFiles:             false,
+		AllowOrigins: []string{
+			"http://localhost:3000",
+			"http://localhost:5173",
+			"https://*.vercel.app",
+			"https://frontend-pos-rouge.vercel.app",
+			"https://frontend-pos-rouge.vercel.app",
+		},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowCredentials: true,
 	}))
 
 	md := middlewares.AuthMiddleware()
@@ -112,8 +115,27 @@ func main() {
 	r.PATCH("/tables/:id", md, table.UpdateTable)
 	r.DELETE("/tables/:id", md, table.DeleteTable)
 
-	// Public endpoint สำหรับลูกค้าสแกน QR Code โต๊ะเพื่อดูเมนู
+	// ===== PUBLIC ENDPOINTS สำหรับลูกค้า (ไม่ต้อง auth) =====
+
+	// Public - สแกน QR Code โต๊ะเพื่อดูเมนู
 	r.GET("/public/menu/:qrCodeIdentifier", table.PublicMenuByQrCode)
 
-	r.Run(":8080")
+	// Public - ดูเมนูทั้งหมด (ไม่จำกัดจำนวน)
+	r.GET("/public/menu-items", menuitem.PublicListMenuItems)
+
+	// Public - สร้างออเดอร์ (ลูกค้าสั่งอาหาร)
+	r.POST("/public/orders/create", order.PublicCreateOrder)
+
+	// Health check endpoint
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "ok", "message": "Server is running"})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Server starting on port %s", port)
+	r.Run(":" + port)
 }

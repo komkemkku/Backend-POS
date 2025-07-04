@@ -6,6 +6,7 @@ import (
 	"Backend-POS/requests"
 	response "Backend-POS/responses"
 	"context"
+	"fmt"
 )
 
 var db = config.Database()
@@ -49,10 +50,10 @@ func GetOrderByIdService(ctx context.Context, id int) (*response.OrderResponse, 
 
 func CreateOrderService(ctx context.Context, staffID int, req requests.OrderCreateRequest) (*response.OrderResponse, error) {
 	order := &model.Orders{
-		TableID:    req.TableID,
-		StaffID:    staffID,
-		Status:     req.Status,
-		TotalAmout: req.TotalAmount,
+		TableID:     req.TableID,
+		StaffID:     staffID,
+		Status:      req.Status,
+		TotalAmount: req.TotalAmount, // ✅ แก้ไขชื่อฟิลด์
 	}
 	order.SetCreatedNow()
 	order.SetUpdateNow()
@@ -64,13 +65,98 @@ func CreateOrderService(ctx context.Context, staffID int, req requests.OrderCrea
 	return GetOrderByIdService(ctx, order.ID)
 }
 
+// PublicCreateOrderService สำหรับลูกค้าสร้างออเดอร์ (ไม่ต้องมี staff_id)
+func PublicCreateOrderService(ctx context.Context, req requests.PublicOrderCreateRequest) (*response.PublicOrderResponse, error) {
+	// ตรวจสอบว่าโต๊ะมีอยู่จริง
+	var table model.Tables
+	err := db.NewSelect().Model(&table).Where("qr_code_identifier = ?", req.QrCodeIdentifier).Scan(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("ไม่พบโต๊ะที่ระบุ")
+	}
+
+	// คำนวณราคารวม
+	var totalAmount float64
+	for _, item := range req.Items {
+		var menuItem model.MenuItems
+		err := db.NewSelect().Model(&menuItem).Where("id = ? AND is_available = ?", item.MenuItemID, true).Scan(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("ไม่พบเมนู ID: %d หรือเมนูไม่พร้อมใช้งาน", item.MenuItemID)
+		}
+		totalAmount += menuItem.Price * float64(item.Quantity)
+	}
+
+	// สร้างออเดอร์
+	order := &model.Orders{
+		TableID:     table.ID,
+		StaffID:     0,         // ลูกค้าสั่งเอง ไม่มี staff
+		Status:      "pending", // สถานะรอดำเนินการ
+		TotalAmount: totalAmount,
+	}
+	order.SetCreatedNow()
+	order.SetUpdateNow()
+
+	_, err = db.NewInsert().Model(order).Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// สร้าง order items และเก็บ response items
+	var responseItems []response.OrderItemResponses
+
+	for _, item := range req.Items {
+		var menuItem model.MenuItems
+		err = db.NewSelect().Model(&menuItem).Where("id = ?", item.MenuItemID).Scan(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("ไม่พบเมนู ID: %d", item.MenuItemID)
+		}
+
+		orderItem := &model.OrderItems{
+			OrderID:      order.ID,
+			MenuItemID:   item.MenuItemID,
+			Quantity:     item.Quantity,
+			PricePerItem: menuItem.Price,
+			Notes:        "", // รับจาก request ถ้ามี
+		}
+		orderItem.SetCreatedNow()
+		orderItem.SetUpdateNow()
+
+		_, err = db.NewInsert().Model(orderItem).Exec(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		// เพิ่มใน response items
+		responseItems = append(responseItems, response.OrderItemResponses{
+			ID:           orderItem.ID,
+			OrderID:      orderItem.OrderID,
+			MenuItemID:   orderItem.MenuItemID,
+			Quantity:     orderItem.Quantity,
+			PricePerItem: orderItem.PricePerItem,
+			SubTotal:     orderItem.PricePerItem * float64(orderItem.Quantity), // คำนวณ SubTotal
+			Notes:        orderItem.Notes,
+			CreatedAt:    orderItem.CreatedAt,
+			UpdatedAt:    orderItem.UpdatedAt,
+		})
+	}
+
+	return &response.PublicOrderResponse{
+		ID:          order.ID,
+		TableID:     order.TableID,
+		Status:      order.Status,
+		TotalAmount: order.TotalAmount,
+		Items:       responseItems, // เพิ่ม items
+		CreatedAt:   order.CreatedAt,
+		Message:     "ออเดอร์ของคุณได้รับการยืนยันแล้ว กรุณารอสักครู่",
+	}, nil
+}
+
 func UpdateOrderService(ctx context.Context, id int, staffID int, req requests.OrderUpdateRequest) (*response.OrderResponse, error) {
 	order := &model.Orders{
-		ID:         id,
-		TableID:    req.TableID,
-		StaffID:    staffID,
-		Status:     req.Status,
-		TotalAmout: req.TotalAmount,
+		ID:          id,
+		TableID:     req.TableID,
+		StaffID:     staffID,
+		Status:      req.Status,
+		TotalAmount: req.TotalAmount, // ✅ แก้ไขชื่อฟิลด์
 	}
 	order.SetUpdateNow()
 

@@ -11,4 +11,6 @@ type OrderItems struct {
 	PricePerItem  float64 `bun:"price_per_item"`                // Price of the menu item at the reservation time
 	Notes         string  `bun:"notes"`                         // Additional notes for the order item
 
+	CreateUnixTimestamp
+	UpdateUnixTimestamp
 }

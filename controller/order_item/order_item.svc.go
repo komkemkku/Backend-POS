@@ -15,10 +15,9 @@ func ListOrderItemService(ctx context.Context, req requests.OrderItemRequest) ([
 	if req.Page > 0 {
 		Offset = (req.Page - 1) * req.Size
 	}
-	resp := []response.OrderItemResponses{}
-	query := db.NewSelect().
-		Model((*model.OrderItems)(nil)).
-		Column("id", "order_id", "menu_item_id", "quantity", "price_per_item", "notes")
+
+	var orderItems []model.OrderItems
+	query := db.NewSelect().Model(&orderItems)
 
 	// Filter
 	if req.Search != "" {
@@ -29,42 +28,72 @@ func ListOrderItemService(ctx context.Context, req requests.OrderItemRequest) ([
 	if err != nil {
 		return nil, 0, err
 	}
-	err = query.OrderExpr("id DESC").Offset(int(Offset)).Limit(int(req.Size)).Scan(ctx, &resp)
+
+	err = query.OrderExpr("id DESC").Offset(int(Offset)).Limit(int(req.Size)).Scan(ctx)
 	if err != nil {
 		return nil, 0, err
 	}
+
+	// แปลงเป็น response และคำนวณ SubTotal
+	resp := make([]response.OrderItemResponses, len(orderItems))
+	for i, item := range orderItems {
+		resp[i] = response.OrderItemResponses{
+			ID:           item.ID,
+			OrderID:      item.OrderID,
+			MenuItemID:   item.MenuItemID,
+			Quantity:     item.Quantity,
+			PricePerItem: item.PricePerItem,
+			SubTotal:     item.PricePerItem * float64(item.Quantity), // คำนวณ SubTotal
+			Notes:        item.Notes,
+			CreatedAt:    item.CreatedAt,
+			UpdatedAt:    item.UpdatedAt,
+		}
+	}
+
 	return resp, total, nil
 }
 
 func GetOrderItemByIdService(ctx context.Context, id int) (*response.OrderItemResponses, error) {
-	data := &response.OrderItemResponses{}
-	err := db.NewSelect().
-		Model((*model.OrderItems)(nil)).
-		Column("id", "order_id", "menu_item_id", "quantity", "price_per_item", "notes").
-		Where("id = ?", id).Scan(ctx, data)
+	var item model.OrderItems
+	err := db.NewSelect().Model(&item).Where("id = ?", id).Scan(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return data, nil
+
+	return &response.OrderItemResponses{
+		ID:           item.ID,
+		OrderID:      item.OrderID,
+		MenuItemID:   item.MenuItemID,
+		Quantity:     item.Quantity,
+		PricePerItem: item.PricePerItem,
+		SubTotal:     item.PricePerItem * float64(item.Quantity), // คำนวณ SubTotal
+		Notes:        item.Notes,
+		CreatedAt:    item.CreatedAt,
+		UpdatedAt:    item.UpdatedAt,
+	}, nil
 }
 
 func CreateOrderItemService(ctx context.Context, req requests.OrderItemCreateRequest) (*response.OrderItemResponses, error) {
-	item := &model.OrderItems{
+	orderItem := &model.OrderItems{
 		OrderID:      req.OrderID,
 		MenuItemID:   req.MenuItemID,
 		Quantity:     req.Quantity,
 		PricePerItem: req.PricePerItem,
 		Notes:        req.Notes,
 	}
-	_, err := db.NewInsert().Model(item).Exec(ctx)
+	orderItem.SetCreatedNow()
+	orderItem.SetUpdateNow()
+
+	_, err := db.NewInsert().Model(orderItem).Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return GetOrderItemByIdService(ctx, item.ID)
+
+	return GetOrderItemByIdService(ctx, orderItem.ID)
 }
 
 func UpdateOrderItemService(ctx context.Context, id int, req requests.OrderItemUpdateRequest) (*response.OrderItemResponses, error) {
-	item := &model.OrderItems{
+	orderItem := &model.OrderItems{
 		ID:           id,
 		OrderID:      req.OrderID,
 		MenuItemID:   req.MenuItemID,
@@ -72,10 +101,13 @@ func UpdateOrderItemService(ctx context.Context, id int, req requests.OrderItemU
 		PricePerItem: req.PricePerItem,
 		Notes:        req.Notes,
 	}
-	_, err := db.NewUpdate().Model(item).WherePK().Exec(ctx)
+	orderItem.SetUpdateNow()
+
+	_, err := db.NewUpdate().Model(orderItem).WherePK().Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
+
 	return GetOrderItemByIdService(ctx, id)
 }
 

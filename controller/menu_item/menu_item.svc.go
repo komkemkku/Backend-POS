@@ -40,6 +40,37 @@ func ListMenuItemService(ctx context.Context, req requests.MenuItemRequest) ([]r
 	return resp, total, nil
 }
 
+// PublicListMenuItemService สำหรับลูกค้า - ดึงเฉพาะเมนูที่พร้อมใช้งาน
+func PublicListMenuItemService(ctx context.Context, req requests.MenuItemRequest) ([]response.MenuItemResponses, int, error) {
+	var Offset int64
+	if req.Page > 0 {
+		Offset = (req.Page - 1) * req.Size
+	}
+
+	resp := []response.MenuItemResponses{}
+
+	query := db.NewSelect().
+		TableExpr("menu_items AS m").
+		Column("m.id", "m.category_id", "m.name", "m.description", "m.price", "m.image_url", "m.is_available", "m.created_at", "m.updated_at").
+		Where("m.is_available = ?", true) // เฉพาะเมนูที่พร้อมใช้งาน
+
+	if req.Search != "" {
+		query = query.Where("m.name ILIKE ?", "%"+req.Search+"%")
+	}
+
+	total, err := query.Count(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = query.Order("m.category_id", "m.name").Offset(int(Offset)).Limit(int(req.Size)).Scan(ctx, &resp)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return resp, total, nil
+}
+
 func CreateMenuItemService(ctx context.Context, req requests.MenuItemCreateRequest) (*response.MenuItemResponses, error) {
 	menu := &model.MenuItems{
 		CategoryID:  req.CategoryID,

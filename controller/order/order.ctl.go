@@ -57,6 +57,21 @@ func CreateOrder(c *gin.Context) {
 	response.Success(c, data)
 }
 
+// PublicCreateOrder สำหรับลูกค้าสร้างออเดอร์ (public - ไม่ต้อง auth)
+func PublicCreateOrder(c *gin.Context) {
+	var req requests.PublicOrderCreateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, err.Error())
+		return
+	}
+	data, err := PublicCreateOrderService(c.Request.Context(), req)
+	if err != nil {
+		response.InternalError(c, err.Error())
+		return
+	}
+	response.Success(c, data)
+}
+
 func UpdateOrder(c *gin.Context) {
 	staffID := c.GetInt("staff_id")
 	var req requests.OrderUpdateRequest
