@@ -12,3 +12,4 @@ type PublicOrderItemRequest struct {
 	MenuItemID int `json:"menu_item_id" binding:"required"`
 	Quantity   int `json:"quantity" binding:"required,min=1"`
 }
+

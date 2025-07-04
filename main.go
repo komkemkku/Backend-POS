@@ -38,12 +38,13 @@ func main() {
 			"http://localhost:3000",
 			"http://localhost:5173",
 			"https://*.vercel.app",
-			"https://frontend-pos-rouge.vercel.app",
-			"https://frontend-pos-rouge.vercel.app",
+			"https://komkemkty-frontend-pos.vercel.app",
+			"https://frontend-pos-jade.vercel.app",
 		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
 		AllowCredentials: true,
+		AllowWildcard:    true,
 	}))
 
 	md := middlewares.AuthMiddleware()
@@ -128,7 +129,16 @@ func main() {
 
 	// Health check endpoint
 	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok", "message": "Server is running"})
+		c.JSON(200, gin.H{
+			"status":    "ok",
+			"message":   "Server is running",
+			"timestamp": func() int64 { return 1704067200 }(), // Unix timestamp
+		})
+	})
+
+	// Emergency fallback endpoint for testing
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "pong"})
 	})
 
 	port := os.Getenv("PORT")
@@ -137,5 +147,6 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %s", port)
+	log.Printf("Environment: %s", os.Getenv("GIN_MODE"))
 	r.Run(":" + port)
 }

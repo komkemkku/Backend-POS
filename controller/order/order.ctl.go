@@ -4,6 +4,7 @@ import (
 	"Backend-POS/model"
 	"Backend-POS/requests"
 	response "Backend-POS/responses"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -74,12 +75,19 @@ func PublicCreateOrder(c *gin.Context) {
 
 func UpdateOrder(c *gin.Context) {
 	staffID := c.GetInt("staff_id")
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		response.BadRequest(c, "Invalid ID")
+		return
+	}
+
 	var req requests.OrderUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, err.Error())
 		return
 	}
-	data, err := UpdateOrderService(c.Request.Context(), req.ID, staffID, req)
+	data, err := UpdateOrderService(c.Request.Context(), id, staffID, req)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return
@@ -88,12 +96,14 @@ func UpdateOrder(c *gin.Context) {
 }
 
 func DeleteOrder(c *gin.Context) {
-	var req requests.OrderDeleteRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		response.BadRequest(c, err.Error())
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		response.BadRequest(c, "Invalid ID")
 		return
 	}
-	err := DeleteOrderService(c.Request.Context(), req.ID)
+
+	err = DeleteOrderService(c.Request.Context(), id)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return

@@ -4,6 +4,7 @@ import (
 	"Backend-POS/model"
 	"Backend-POS/requests"
 	response "Backend-POS/responses"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,19 +60,19 @@ func CreateMenuItem(c *gin.Context) {
 }
 
 func UpdateMenuItem(c *gin.Context) {
-	var uri struct {
-		ID int `uri:"id" binding:"required"`
-	}
-	if err := c.ShouldBindUri(&uri); err != nil {
-		response.BadRequest(c, err.Error())
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		response.BadRequest(c, "Invalid ID")
 		return
 	}
+
 	var req requests.MenuItemUpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, err.Error())
 		return
 	}
-	data, err := UpdateMenuItemService(c.Request.Context(), uri.ID, req)
+	data, err := UpdateMenuItemService(c.Request.Context(), id, req)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return
@@ -80,14 +81,14 @@ func UpdateMenuItem(c *gin.Context) {
 }
 
 func DeleteMenuItem(c *gin.Context) {
-	var uri struct {
-		ID int `uri:"id" binding:"required"`
-	}
-	if err := c.ShouldBindUri(&uri); err != nil {
-		response.BadRequest(c, err.Error())
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		response.BadRequest(c, "Invalid ID")
 		return
 	}
-	err := DeleteMenuItemService(c.Request.Context(), uri.ID)
+
+	err = DeleteMenuItemService(c.Request.Context(), id)
 	if err != nil {
 		response.InternalError(c, err.Error())
 		return

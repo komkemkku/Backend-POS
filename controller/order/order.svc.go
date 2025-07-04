@@ -53,7 +53,7 @@ func CreateOrderService(ctx context.Context, staffID int, req requests.OrderCrea
 		TableID:     req.TableID,
 		StaffID:     staffID,
 		Status:      req.Status,
-		TotalAmount: req.TotalAmount, // ✅ แก้ไขชื่อฟิลด์
+		TotalAmount: req.TotalAmount,
 	}
 	order.SetCreatedNow()
 	order.SetUpdateNow()
@@ -115,7 +115,7 @@ func PublicCreateOrderService(ctx context.Context, req requests.PublicOrderCreat
 			MenuItemID:   item.MenuItemID,
 			Quantity:     item.Quantity,
 			PricePerItem: menuItem.Price,
-			Notes:        "", // รับจาก request ถ้ามี
+			Notes:        "",
 		}
 		orderItem.SetCreatedNow()
 		orderItem.SetUpdateNow()
@@ -132,7 +132,7 @@ func PublicCreateOrderService(ctx context.Context, req requests.PublicOrderCreat
 			MenuItemID:   orderItem.MenuItemID,
 			Quantity:     orderItem.Quantity,
 			PricePerItem: orderItem.PricePerItem,
-			SubTotal:     orderItem.PricePerItem * float64(orderItem.Quantity), // คำนวณ SubTotal
+			SubTotal:     orderItem.PricePerItem * float64(orderItem.Quantity),
 			Notes:        orderItem.Notes,
 			CreatedAt:    orderItem.CreatedAt,
 			UpdatedAt:    orderItem.UpdatedAt,
@@ -142,10 +142,12 @@ func PublicCreateOrderService(ctx context.Context, req requests.PublicOrderCreat
 	return &response.PublicOrderResponse{
 		ID:          order.ID,
 		TableID:     order.TableID,
+		TableNumber: table.TableNumber,
 		Status:      order.Status,
 		TotalAmount: order.TotalAmount,
-		Items:       responseItems, // เพิ่ม items
+		Items:       responseItems,
 		CreatedAt:   order.CreatedAt,
+		UpdatedAt:   order.UpdatedAt,
 		Message:     "ออเดอร์ของคุณได้รับการยืนยันแล้ว กรุณารอสักครู่",
 	}, nil
 }
@@ -156,7 +158,7 @@ func UpdateOrderService(ctx context.Context, id int, staffID int, req requests.O
 		TableID:     req.TableID,
 		StaffID:     staffID,
 		Status:      req.Status,
-		TotalAmount: req.TotalAmount, // ✅ แก้ไขชื่อฟิลด์
+		TotalAmount: req.TotalAmount,
 	}
 	order.SetUpdateNow()
 

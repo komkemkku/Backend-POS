@@ -99,7 +99,7 @@ func DeleteTableService(ctx context.Context, id int) error {
 }
 
 // PublicGetMenuByQrCodeService ดึงเมนูอาหารสำหรับลูกค้าที่สแกน QR Code โต๊ะ (public)
-func PublicGetMenuByQrCodeService(ctx context.Context, qrCodeIdentifier string) ([]response.MenuItemResponses, error) {
+func PublicGetMenuByQrCodeService(ctx context.Context, qrCodeIdentifier string) (*response.PublicMenuResponse, error) {
 	var table model.Tables
 	err := db.NewSelect().Model(&table).Where("qr_code_identifier = ?", qrCodeIdentifier).Scan(ctx)
 	if err != nil {
@@ -107,7 +107,7 @@ func PublicGetMenuByQrCodeService(ctx context.Context, qrCodeIdentifier string) 
 	}
 
 	var menus []model.MenuItems
-	err = db.NewSelect().Model(&menus).Where("is_available = true").Order("category_id, id").Scan(ctx)
+	err = db.NewSelect().Model(&menus).Where("is_available = true").Order("category_id", "id").Scan(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,18 @@ func PublicGetMenuByQrCodeService(ctx context.Context, qrCodeIdentifier string) 
 			Price:       m.Price,
 			ImageUrl:    m.ImageURL,
 			IsAvailable: m.IsAvailable,
+			CreatedAt:   m.CreatedAt,
+			UpdatedAt:   m.UpdatedAt,
 		}
 	}
-	return menuResp, nil
+
+	return &response.PublicMenuResponse{
+		TableInfo: response.TableInfo{
+			ID:               table.ID,
+			TableNumber:      table.TableNumber,
+			QrCodeIdentifier: table.QrCodeIdentifier,
+			Status:           table.Status,
+		},
+		MenuItems: menuResp,
+	}, nil
 }
