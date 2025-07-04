@@ -29,11 +29,17 @@ INSERT INTO menu_items (name, description, price, category_id, image_url, is_ava
 ('ทับทิมกรอบ', 'ทับทิมกรอบเย็นชื่นใจ', 45.00, 3, 'https://example.com/tubtim.jpg', true, EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW())),
 ('แกงเขียวหวานไก่', 'แกงเขียวหวานไก่รสชาติเข้มข้น', 90.00, 1, 'https://example.com/greencurry.jpg', true, EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW()));
 
--- Staff (password ต้อง hash ด้วย bcrypt จริงๆ)
-INSERT INTO staff (first_name, last_name, email, password, phone, position, created_at, updated_at) VALUES
-('Admin', 'System', 'admin@restaurant.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0812345678', 'admin', EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW())),
-('John', 'Doe', 'staff1@restaurant.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0823456789', 'staff', EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW())),
-('Jane', 'Smith', 'staff2@restaurant.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '0834567890', 'staff', EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW()));
+-- Staff (password: "password" hashed ด้วย bcrypt)
+-- ในการใช้งานจริง ต้อง hash password ก่อนเก็บใน database
+INSERT INTO staff (username, password_hash, full_name, role, created_at, updated_at) VALUES
+('admin', '$2a$14$siHZSUyQ8FEsRz6jJ1WhH.W4qjf.ytEWMAeG0XlnwRg9C5aQnIHmO', 'ผู้ดูแลระบบ', 'admin', EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW())),
+('staff1', '$2a$14$siHZSUyQ8FEsRz6jJ1WhH.W4qjf.ytEWMAeG0XlnwRg9C5aQnIHmO', 'พนักงานคนที่ 1', 'staff', EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW())),
+('staff2', '$2a$14$siHZSUyQ8FEsRz6jJ1WhH.W4qjf.ytEWMAeG0XlnwRg9C5aQnIHmO', 'พนักงานคนที่ 2', 'staff', EXTRACT(EPOCH FROM NOW()), EXTRACT(EPOCH FROM NOW()));
+
+-- ข้อมูลการ Login:
+-- username: admin, password: password (role: admin)
+-- username: staff1, password: password (role: staff)
+-- username: staff2, password: password (role: staff)
 
 -- Sample Orders (สำหรับโต๊ะ 3 ที่ occupied)
 INSERT INTO orders (table_id, staff_id, status, total_amount, created_at, updated_at) VALUES

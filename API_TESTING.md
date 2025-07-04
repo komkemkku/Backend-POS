@@ -60,10 +60,29 @@ curl -X GET http://localhost:8080/public/table/summary/table_001
 curl -X POST http://localhost:8080/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "staff@example.com",
-    "password": "password123"
+    "username": "admin",
+    "password": "password"
   }'
 ```
+
+**Response ที่ได้:**
+```json
+{
+  "success": true,
+  "message": "เข้าสู่ระบบสำเร็จ",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "staff": {
+      "id": 1,
+      "username": "admin",
+      "full_name": "ผู้ดูแลระบบ",
+      "role": "admin"
+    }
+  }
+}
+```
+
+**คัดลอก token ไปใช้ใน API อื่นๆ**
 
 ### 2. ล้างประวัติโต๊ะ (ต้องใส่ token ที่ได้จาก login)
 ```bash

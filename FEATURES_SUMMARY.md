@@ -346,7 +346,7 @@ Content-Type: application/json
 **Request Body:**
 ```json
 {
-  "email": "admin@restaurant.com",
+  "username": "admin",
   "password": "password"
 }
 ```
@@ -359,7 +359,7 @@ const authResponse = await fetch('http://localhost:8080/auth/login', {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    email: 'admin@restaurant.com',
+    username: 'admin',
     password: 'password'
   })
 });
@@ -375,10 +375,9 @@ const authData = await authResponse.json();
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "staff": {
       "id": 1,
-      "first_name": "Admin",
-      "last_name": "System",
-      "email": "admin@restaurant.com",
-      "position": "admin"
+      "username": "admin",
+      "full_name": "ผู้ดูแลระบบ",
+      "role": "admin"
     }
   }
 }
