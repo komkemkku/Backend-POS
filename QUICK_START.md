@@ -64,7 +64,7 @@ curl -X POST http://localhost:8080/public/orders/create \
 ### พนักงาน (Staff)
 | Method | Endpoint | ใช้งาน |
 |--------|----------|-------|
-| `POST` | `/auth/login` | เข้าสู่ระบบ |
+| `POST` | `/staff/login` | เข้าสู่ระบบ |
 | `POST` | `/staff/orders/clear-table/:qrCode` | ล้างประวัติหลังชำระเงิน |
 | `PATCH` | `/staff/orders/:id/status` | เปลี่ยนสถานะออเดอร์ |
 
@@ -92,7 +92,7 @@ const status = await fetch(`/public/orders/${order.data.id}/table/table_001`).th
 ### พนักงานจัดการ
 ```javascript
 // 1. Login
-const auth = await fetch('/auth/login', {
+const auth = await fetch('/staff/login', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},
   body: JSON.stringify({

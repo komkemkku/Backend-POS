@@ -49,8 +49,8 @@ func main() {
 
 	md := middlewares.AuthMiddleware()
 
-	//auth
-	r.POST("/auth/login", auth.LoginStaff)
+	// Auth endpoints
+	r.POST("/staff/login", auth.LoginStaff)
 
 	// Staff endpoints
 	r.GET("/staff/info", md, staff.GetInfoStaff)
@@ -121,7 +121,7 @@ func main() {
 	r.GET("/public/menu/:qrCodeIdentifier", table.PublicMenuByQrCode)
 
 	// Public - ดูเมนูทั้งหมด (ไม่จำกัดจำนวน)
-	r.GET("/public/menu-items", menuitem.PublicListMenuItems)
+	r.GET("/public/menu", menuitem.PublicListMenuItems)
 
 	// Public - สร้างออเดอร์ (ลูกค้าสั่งอาหาร)
 	r.POST("/public/orders/create", order.PublicCreateOrder)

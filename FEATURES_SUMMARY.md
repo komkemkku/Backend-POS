@@ -339,7 +339,7 @@ fetch('http://localhost:8080/public/table/summary/table_001')
 
 ### 🔑 Authentication - เข้าสู่ระบบ
 ```http
-POST /auth/login
+POST /staff/login
 Content-Type: application/json
 ```
 
@@ -353,7 +353,7 @@ Content-Type: application/json
 
 **ตัวอย่าง Request:**
 ```javascript
-const authResponse = await fetch('http://localhost:8080/auth/login', {
+const authResponse = await fetch('http://localhost:8080/staff/login', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'

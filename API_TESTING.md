@@ -15,7 +15,7 @@ curl -X GET http://localhost:8080/public/menu/table_001
 
 ### 3. ดูเมนูทั้งหมด
 ```bash
-curl -X GET http://localhost:8080/public/menu-items
+curl -X GET http://localhost:8080/public/menu
 ```
 
 ### 4. สร้างออเดอร์
@@ -57,7 +57,7 @@ curl -X GET http://localhost:8080/public/table/summary/table_001
 
 ### 1. Login
 ```bash
-curl -X POST http://localhost:8080/auth/login \
+curl -X POST http://localhost:8080/staff/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin",
