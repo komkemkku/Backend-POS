@@ -23,8 +23,8 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 
 	// Get today's date range (00:00:00 to 23:59:59)
 	now := time.Now()
-	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	endOfDay := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 999999999, now.Location())
+	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).Unix()
+	endOfDay := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 999999999, now.Location()).Unix()
 
 	// Get today's orders count
 	todayOrders, err := db.NewSelect().

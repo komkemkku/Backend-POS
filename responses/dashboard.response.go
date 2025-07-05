@@ -1,14 +1,14 @@
 package response
 
 type DashboardSummaryResponse struct {
-	TotalTables    int                 `json:"total_tables"`
-	TodayRevenue   float64             `json:"today_revenue"`
-	TodayOrders    int                 `json:"today_orders"`
-	PendingOrders  int                 `json:"pending_orders"`
+	TotalTables    int                   `json:"total_tables"`
+	TodayRevenue   float64               `json:"today_revenue"`
+	TodayOrders    int                   `json:"today_orders"`
+	PendingOrders  int                   `json:"pending_orders"`
 	PopularItems   []PopularItemResponse `json:"popular_items"`
 	RecentOrders   []RecentOrderResponse `json:"recent_orders"`
-	TodayCustomers int                 `json:"today_customers"`
-	AvgOrderTime   int                 `json:"avg_order_time_minutes"`
+	TodayCustomers int                   `json:"today_customers"`
+	AvgOrderTime   int                   `json:"avg_order_time_minutes"`
 }
 
 type PopularItemResponse struct {
