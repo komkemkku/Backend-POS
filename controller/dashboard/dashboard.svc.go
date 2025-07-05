@@ -15,7 +15,7 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	// Get total tables
 	totalTables, err := db.NewSelect().
 		Table("tables").
-		Where("deleted_at IS NULL").
+		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Count(ctx)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	todayOrders, err := db.NewSelect().
 		Table("orders").
 		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
-		Where("deleted_at IS NULL").
+		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Count(ctx)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	pendingOrders, err := db.NewSelect().
 		Table("orders").
 		Where("status IN (?, ?, ?)", "pending", "preparing", "ready").
-		Where("deleted_at IS NULL").
+		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Count(ctx)
 	if err != nil {
 		return nil, err
@@ -55,12 +55,62 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 		Table("payments").
 		Column("COALESCE(SUM(amount), 0) as revenue").
 		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
-		Where("deleted_at IS NULL").
+		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Scan(ctx, &todayRevenue)
 	if err != nil {
 		return nil, err
 	}
 	summary.TodayRevenue = todayRevenue
+
+	// Get today's customers count (unique table numbers from today's orders)
+	todayCustomers, err := db.NewSelect().
+		Table("orders").
+		Column("COUNT(DISTINCT table_number) as customers").
+		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
+		Where("deleted_at = 0 OR deleted_at IS NULL").
+		Count(ctx)
+	if err != nil {
+		return nil, err
+	}
+	summary.TodayCustomers = todayCustomers
+
+	// Get popular menu items (top 5 from today's order_items)
+	var popularItems []response.PopularItemResponse
+	err = db.NewSelect().
+		Table("order_items").
+		Column("mi.id", "mi.name", "c.name as category", "COUNT(*) as sold", "SUM(order_items.price * order_items.quantity) as revenue").
+		Join("JOIN menu_items mi ON order_items.menu_item_id = mi.id").
+		Join("JOIN categories c ON mi.category_id = c.id").
+		Join("JOIN orders o ON order_items.order_id = o.id").
+		Where("o.created_at >= ? AND o.created_at <= ?", startOfDay, endOfDay).
+		Where("order_items.deleted_at = 0 OR order_items.deleted_at IS NULL").
+		Where("mi.deleted_at = 0 OR mi.deleted_at IS NULL").
+		Where("o.deleted_at = 0 OR o.deleted_at IS NULL").
+		Group("mi.id", "mi.name", "c.name").
+		Order("sold DESC").
+		Limit(5).
+		Scan(ctx, &popularItems)
+	if err != nil {
+		return nil, err
+	}
+	summary.PopularItems = popularItems
+
+	// Get recent orders (last 10)
+	var recentOrders []response.RecentOrderResponse
+	err = db.NewSelect().
+		Table("orders").
+		Column("id", "table_number", "total_amount", "status", "created_at").
+		Where("deleted_at = 0 OR deleted_at IS NULL").
+		Order("created_at DESC").
+		Limit(10).
+		Scan(ctx, &recentOrders)
+	if err != nil {
+		return nil, err
+	}
+	summary.RecentOrders = recentOrders
+
+	// Set average order time (mock data for now)
+	summary.AvgOrderTime = 25
 
 	return summary, nil
 }

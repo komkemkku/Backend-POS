@@ -36,10 +36,10 @@ func main() {
 	// ปรับ CORS สำหรับ production และรองรับ localhost frontend
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"http://localhost:3000",   // Create React App/Next.js
-			"http://localhost:3001",   // Vite alternative port
-			"http://localhost:5173",   // Vite default port
-			"http://localhost:8080",   // Local development
+			"http://localhost:3000", // Create React App/Next.js
+			"http://localhost:3001", // Vite alternative port
+			"http://localhost:5173", // Vite default port
+			"http://localhost:8080", // Local development
 			"https://*.vercel.app",
 			"https://komkemkty-frontend-pos.vercel.app",
 			"https://frontend-pos-jade.vercel.app",
