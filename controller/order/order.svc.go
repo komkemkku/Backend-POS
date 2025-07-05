@@ -33,6 +33,39 @@ func ListOrderService(ctx context.Context, req requests.OrderRequest) ([]respons
 	if err != nil {
 		return nil, 0, err
 	}
+
+	// ดึง order items สำหรับแต่ละออเดอร์
+	for i := range resp {
+		var orderItems []model.OrderItems
+		err = db.NewSelect().Model(&orderItems).Where("order_id = ?", resp[i].ID).Scan(ctx)
+		if err != nil {
+			continue // หากไม่มี order items ให้ข้ามไป
+		}
+
+		// แปลง order items เป็น response
+		var responseItems []response.OrderItemResponses
+		for _, item := range orderItems {
+			// ดึงชื่อเมนูจาก menu_items table
+			var menuItem model.MenuItems
+			db.NewSelect().Model(&menuItem).Where("id = ?", item.MenuItemID).Scan(ctx)
+			
+			responseItems = append(responseItems, response.OrderItemResponses{
+				ID:           item.ID,
+				OrderID:      item.OrderID,
+				MenuItemID:   item.MenuItemID,
+				MenuName:     menuItem.Name,
+				Quantity:     item.Quantity,
+				PricePerItem: item.PricePerItem,
+				SubTotal:     item.PricePerItem * float64(item.Quantity),
+				Notes:        item.Notes,
+				CreatedAt:    item.CreatedAt,
+				UpdatedAt:    item.UpdatedAt,
+			})
+		}
+		
+		resp[i].OrderItems = responseItems
+	}
+
 	return resp, total, nil
 }
 
@@ -46,6 +79,37 @@ func GetOrderByIdService(ctx context.Context, id int) (*response.OrderResponse, 
 	if err != nil {
 		return nil, err
 	}
+
+	// ดึง order items
+	var orderItems []model.OrderItems
+	err = db.NewSelect().Model(&orderItems).Where("order_id = ?", order.ID).Scan(ctx)
+	if err != nil {
+		// หากไม่มี order items ให้ส่งออเดอร์แบบไม่มี items
+		return order, nil
+	}
+
+	// แปลง order items เป็น response
+	var responseItems []response.OrderItemResponses
+	for _, item := range orderItems {
+		// ดึงชื่อเมนูจาก menu_items table
+		var menuItem model.MenuItems
+		db.NewSelect().Model(&menuItem).Where("id = ?", item.MenuItemID).Scan(ctx)
+		
+		responseItems = append(responseItems, response.OrderItemResponses{
+			ID:           item.ID,
+			OrderID:      item.OrderID,
+			MenuItemID:   item.MenuItemID,
+			MenuName:     menuItem.Name,
+			Quantity:     item.Quantity,
+			PricePerItem: item.PricePerItem,
+			SubTotal:     item.PricePerItem * float64(item.Quantity),
+			Notes:        item.Notes,
+			CreatedAt:    item.CreatedAt,
+			UpdatedAt:    item.UpdatedAt,
+		})
+	}
+	
+	order.OrderItems = responseItems
 	return order, nil
 }
 
