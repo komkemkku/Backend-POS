@@ -48,7 +48,7 @@ func ListOrderService(ctx context.Context, req requests.OrderRequest) ([]respons
 			// ดึงชื่อเมนูจาก menu_items table
 			var menuItem model.MenuItems
 			db.NewSelect().Model(&menuItem).Where("id = ?", item.MenuItemID).Scan(ctx)
-			
+
 			responseItems = append(responseItems, response.OrderItemResponses{
 				ID:           item.ID,
 				OrderID:      item.OrderID,
@@ -62,7 +62,7 @@ func ListOrderService(ctx context.Context, req requests.OrderRequest) ([]respons
 				UpdatedAt:    item.UpdatedAt,
 			})
 		}
-		
+
 		resp[i].OrderItems = responseItems
 	}
 
@@ -94,7 +94,7 @@ func GetOrderByIdService(ctx context.Context, id int) (*response.OrderResponse, 
 		// ดึงชื่อเมนูจาก menu_items table
 		var menuItem model.MenuItems
 		db.NewSelect().Model(&menuItem).Where("id = ?", item.MenuItemID).Scan(ctx)
-		
+
 		responseItems = append(responseItems, response.OrderItemResponses{
 			ID:           item.ID,
 			OrderID:      item.OrderID,
@@ -108,7 +108,7 @@ func GetOrderByIdService(ctx context.Context, id int) (*response.OrderResponse, 
 			UpdatedAt:    item.UpdatedAt,
 		})
 	}
-	
+
 	order.OrderItems = responseItems
 	return order, nil
 }
