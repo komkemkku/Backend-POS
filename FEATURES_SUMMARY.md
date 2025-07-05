@@ -335,8 +335,6 @@ fetch('http://localhost:8080/public/table/summary/table_001')
 
 ## 👨‍💼 STAFF API (ต้อง Authentication)
 
-## 👨‍💼 STAFF API (ต้อง Authentication)
-
 ### 🔑 Authentication - เข้าสู่ระบบ
 ```http
 POST /staff/login
@@ -584,6 +582,81 @@ fetch('http://localhost:8080/orders?page=1&size=10', {
   "size": 10
 }
 ```
+
+### 🔐 Authentication
+
+#### Staff Login
+```http
+POST /staff/login
+```
+
+**Request Body:**
+```json
+{
+  "username": "admin",
+  "password": "password"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "staff": {
+      "id": 1,
+      "username": "admin",
+      "full_name": "ผู้ดูแลระบบ",
+      "role": "admin"
+    }
+  }
+}
+```
+
+#### Get Staff Info
+```http
+GET /staff/info
+Authorization: Bearer <token>
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "id": 1,
+    "username": "admin",
+    "full_name": "ผู้ดูแลระบบ",
+    "role": "admin"
+  }
+}
+```
+
+#### Dashboard Summary ✨ **NEW**
+```http
+GET /summary
+Authorization: Bearer <token>
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "total_tables": 5,
+    "today_revenue": 2350.75,
+    "today_orders": 15,
+    "pending_orders": 3
+  }
+}
+```
+
+**Description:**
+- `total_tables`: จำนวนโต๊ะทั้งหมดในระบบ
+- `today_revenue`: รายได้วันนี้ (จากการชำระเงิน)
+- `today_orders`: จำนวนออเดอร์วันนี้
+- `pending_orders`: ออเดอร์ที่รอดำเนินการ (pending, preparing, ready)
 
 ---
 
@@ -916,6 +989,7 @@ GET /ping
 - [ ] หน้าจัดการออเดอร์
 - [ ] ระบบอัปเดตสถานะ
 - [ ] ระบบล้างประวัติโต๊ะ
+- [ ] หน้าสรุปข้อมูล Dashboard
 
 ### ✅ UX/UI
 - [ ] แสดงสถานะด้วยสีและ icon

@@ -121,6 +121,26 @@ curl -X PATCH http://localhost:8080/staff/orders/1/status \
   }'
 ```
 
+### 6. Dashboard Summary
+```bash
+# ต้องใส่ token ที่ได้จาก login
+curl -X GET http://localhost:8080/summary \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
+```
+
+**Response ที่ได้:**
+```json
+{
+  "status": "success",
+  "data": {
+    "total_tables": 5,
+    "today_revenue": 2350.75,
+    "today_orders": 15,
+    "pending_orders": 3
+  }
+}
+```
+
 ## ข้อมูลตัวอย่างที่ต้องมีในฐานข้อมูล
 
 ### Tables

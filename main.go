@@ -5,6 +5,7 @@ import (
 	config "Backend-POS/configs"
 	"Backend-POS/controller/auth"
 	"Backend-POS/controller/categories"
+	"Backend-POS/controller/dashboard"
 	"Backend-POS/controller/expense"
 	menuitem "Backend-POS/controller/menu_item"
 	"Backend-POS/controller/order"
@@ -51,6 +52,9 @@ func main() {
 
 	// Auth endpoints
 	r.POST("/staff/login", auth.LoginStaff)
+
+	// Dashboard endpoints
+	r.GET("/summary", md, dashboard.GetDashboardSummary)
 
 	// Staff endpoints
 	r.GET("/staff/info", md, staff.GetInfoStaff)
