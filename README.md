@@ -2,6 +2,10 @@
 
 Backend API สำหรับระบบ Point of Sale (POS) ร้านอาหาร
 
+## 🔗 Related Repository
+- **Frontend**: [Front-POS](https://github.com/komkemkku/Front-POS.git)
+- **Backend**: [Backend-POS](https://github.com/komkemkku/Backend-POS.git) (this repository)
+
 ## เทคโนโลยี
 - Go 1.23.4
 - Gin Framework
@@ -11,9 +15,12 @@ Backend API สำหรับระบบ Point of Sale (POS) ร้านอ�
 ## การติดตั้ง
 
 ```bash
-# Clone โปรเจค
-git clone <repository-url>
+# Clone โปรเจค Backend
+git clone https://github.com/komkemkku/Backend-POS.git
 cd Backend-POS
+
+# Clone โปรเจค Frontend (ในอีก terminal)
+git clone https://github.com/komkemkku/Front-POS.git
 
 # ติดตั้ง dependencies
 go mod tidy
@@ -54,3 +61,14 @@ Backend-POS/
 ├── utils/        # Utility functions
 └── main.go       # Entry point
 ```
+
+## 🌐 CORS Configuration
+API รองรับ CORS สำหรับ Frontend domains:
+- `http://localhost:3000` (Next.js development)
+- `http://localhost:5173` (Vite development)
+- `https://*.vercel.app` (Production deployment)
+
+## 📱 Development Workflow
+1. เริ่ม Backend server: `go run main.go` (port 8080)
+2. เริ่ม Frontend development server ในโฟลเดอร์ Front-POS
+3. Frontend จะเชื่อมต่อกับ Backend API ผ่าน localhost:8080
