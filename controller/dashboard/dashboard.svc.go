@@ -29,6 +29,28 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	summary.TodayCustomers = 124
 	summary.AvgOrderTime = 25
 
+	// เพิ่มข้อมูลสำหรับคำนวณเปอร์เซ็นต์การเปลี่ยนแปลง
+	summary.YesterdayRevenue = 13567.80
+	summary.YesterdayOrders = 44
+	summary.YesterdayCustomers = 128
+	summary.LastWeekAvgTime = 27
+
+	// ข้อมูลกราฟยอดขาย (mock data)
+	summary.SalesChart = response.SalesChartResponse{
+		SevenDays: response.ChartDataResponse{
+			Labels: []string{"จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์", "อาทิตย์"},
+			Data:   []float64{12000, 15000, 18000, 22000, 25000, 28000, 20000},
+		},
+		ThirtyDays: response.ChartDataResponse{
+			Labels: []string{"สัปดาห์ 1", "สัปดาห์ 2", "สัปดาห์ 3", "สัปดาห์ 4"},
+			Data:   []float64{85000, 92000, 105000, 98000},
+		},
+		NinetyDays: response.ChartDataResponse{
+			Labels: []string{"เดือน 1", "เดือน 2", "เดือน 3"},
+			Data:   []float64{350000, 380000, 420000},
+		},
+	}
+
 	// Popular items (mock data)
 	summary.PopularItems = []response.PopularItemResponse{
 		{ID: 1, Name: "ผัดไทย", Category: "อาหารจานหลัก", Sold: 25, Revenue: 1500},
