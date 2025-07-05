@@ -22,18 +22,20 @@ cd Backend-POS
 # Clone โปรเจค Frontend (ในอีก terminal)
 git clone https://github.com/komkemkku/Frontend-POS.git
 
+# Setup development environment
+make setup
+
 # ติดตั้ง dependencies
-go mod tidy
+make deps
 
 # ตั้งค่า environment variables
-cp .env.example .env
-# แก้ไขค่าในไฟล์ .env
+# แก้ไขค่าในไฟล์ .env ที่สร้างจาก make setup
 
 # รัน migration
-go run cmd/migrateCmd.go
+make migrate
 
 # รันเซิร์ฟเวอร์
-go run main.go
+make dev
 ```
 
 ## API Endpoints
