@@ -3,7 +3,7 @@
 Backend API สำหรับระบบ Point of Sale (POS) ร้านอาหาร
 
 ## 🔗 Related Repository
-- **Frontend**: [Front-POS](https://github.com/komkemkku/Front-POS.git)
+- **Frontend**: [Frontend-POS](https://github.com/komkemkku/Frontend-POS.git)
 - **Backend**: [Backend-POS](https://github.com/komkemkku/Backend-POS.git) (this repository)
 
 ## เทคโนโลยี
@@ -20,7 +20,7 @@ git clone https://github.com/komkemkku/Backend-POS.git
 cd Backend-POS
 
 # Clone โปรเจค Frontend (ในอีก terminal)
-git clone https://github.com/komkemkku/Front-POS.git
+git clone https://github.com/komkemkku/Frontend-POS.git
 
 # ติดตั้ง dependencies
 go mod tidy
@@ -70,5 +70,5 @@ API รองรับ CORS สำหรับ Frontend domains:
 
 ## 📱 Development Workflow
 1. เริ่ม Backend server: `go run main.go` (port 8080)
-2. เริ่ม Frontend development server ในโฟลเดอร์ Front-POS
+2. เริ่ม Frontend development server ในโฟลเดอร์ Frontend-POS
 3. Frontend จะเชื่อมต่อกับ Backend API ผ่าน localhost:8080
