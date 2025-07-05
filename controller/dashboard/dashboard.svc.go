@@ -15,7 +15,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	// Get total tables
 	totalTables, err := db.NewSelect().
 		Table("tables").
-		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Count(ctx)
 	if err != nil {
 		return nil, err
@@ -31,7 +30,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	todayOrders, err := db.NewSelect().
 		Table("orders").
 		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
-		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Count(ctx)
 	if err != nil {
 		return nil, err
@@ -42,7 +40,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	pendingOrders, err := db.NewSelect().
 		Table("orders").
 		Where("status IN (?, ?, ?)", "pending", "preparing", "ready").
-		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Count(ctx)
 	if err != nil {
 		return nil, err
@@ -55,7 +52,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 		Table("payments").
 		Column("COALESCE(SUM(amount), 0) as revenue").
 		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
-		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Scan(ctx, &todayRevenue)
 	if err != nil {
 		return nil, err
@@ -67,7 +63,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 		Table("orders").
 		Column("COUNT(DISTINCT table_number) as customers").
 		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
-		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Count(ctx)
 	if err != nil {
 		return nil, err
@@ -83,9 +78,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 		Join("JOIN categories c ON mi.category_id = c.id").
 		Join("JOIN orders o ON order_items.order_id = o.id").
 		Where("o.created_at >= ? AND o.created_at <= ?", startOfDay, endOfDay).
-		Where("order_items.deleted_at = 0 OR order_items.deleted_at IS NULL").
-		Where("mi.deleted_at = 0 OR mi.deleted_at IS NULL").
-		Where("o.deleted_at = 0 OR o.deleted_at IS NULL").
 		Group("mi.id", "mi.name", "c.name").
 		Order("sold DESC").
 		Limit(5).
@@ -100,7 +92,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	err = db.NewSelect().
 		Table("orders").
 		Column("id", "table_number", "total_amount", "status", "created_at").
-		Where("deleted_at = 0 OR deleted_at IS NULL").
 		Order("created_at DESC").
 		Limit(10).
 		Scan(ctx, &recentOrders)
