@@ -6,6 +6,10 @@
 .env.test
 .env.production
 
+# Documentation
+*.md
+README.md
+
 # Go build artifacts
 *.exe
 *.exe~

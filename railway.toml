@@ -2,7 +2,8 @@
 builder = "dockerfile"
 
 [deploy]
-healthcheckPath = "/health"
-healthcheckTimeout = 100
+healthcheckPath = "/ping"
+healthcheckTimeout = 300
 restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 10
+restartPolicyMaxRetries = 3
+numReplicas = 1

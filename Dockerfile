@@ -31,9 +31,6 @@ WORKDIR /root/
 # Copy the binary from builder stage
 COPY --from=builder /app/main .
 
-# Copy any necessary files (like sample_data.sql if needed)
-COPY --from=builder /app/sample_data.sql ./
-
 # Expose port (Railway will override this with $PORT)
 EXPOSE 8080
 
