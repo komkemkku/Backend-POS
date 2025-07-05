@@ -37,6 +37,7 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://localhost:3000",   // Create React App/Next.js
+			"http://localhost:3001",   // Vite alternative port
 			"http://localhost:5173",   // Vite default port
 			"http://localhost:8080",   // Local development
 			"https://*.vercel.app",
