@@ -38,6 +38,7 @@ func main() {
 		AllowOrigins: []string{
 			"http://localhost:3000", // Create React App/Next.js
 			"http://localhost:3001", // Vite alternative port
+			"http://localhost:3002", // Vite port 3002
 			"http://localhost:5173", // Vite default port
 			"http://localhost:8080", // Local development
 			"https://*.vercel.app",
