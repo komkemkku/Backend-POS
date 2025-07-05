@@ -50,7 +50,7 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	var todayRevenue float64
 	err = db.NewSelect().
 		Table("payments").
-		Column("COALESCE(SUM(amount), 0) as revenue").
+		Column("COALESCE(SUM(amount), 0)").
 		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
 		Scan(ctx, &todayRevenue)
 	if err != nil {
@@ -59,11 +59,12 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 	summary.TodayRevenue = todayRevenue
 
 	// Get today's customers count (unique table numbers from today's orders)
-	todayCustomers, err := db.NewSelect().
+	var todayCustomers int
+	err = db.NewSelect().
 		Table("orders").
-		Column("COUNT(DISTINCT table_number) as customers").
+		Column("COUNT(DISTINCT table_number)").
 		Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay).
-		Count(ctx)
+		Scan(ctx, &todayCustomers)
 	if err != nil {
 		return nil, err
 	}
