@@ -33,11 +33,12 @@ func main() {
 	log.Println("Database connected successfully")
 	r := gin.Default()
 
-	// ปรับ CORS สำหรับ production และรองรับ Vercel
+	// ปรับ CORS สำหรับ production และรองรับ localhost frontend
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"http://localhost:3000",
-			"http://localhost:5173",
+			"http://localhost:3000",   // Create React App/Next.js
+			"http://localhost:5173",   // Vite default port
+			"http://localhost:8080",   // Local development
 			"https://*.vercel.app",
 			"https://komkemkty-frontend-pos.vercel.app",
 			"https://frontend-pos-jade.vercel.app",
