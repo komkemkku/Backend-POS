@@ -6,8 +6,8 @@ import (
 	"Backend-POS/requests"
 	response "Backend-POS/responses"
 	"context"
-	"errors"
 	"strconv"
+	"time"
 )
 
 var db = config.Database()
@@ -62,10 +62,21 @@ func GetPaymentByIdService(ctx context.Context, id int) (*response.PaymentRespon
 }
 
 func CreatePaymentService(ctx context.Context, req requests.PaymentCreateRequest) (*response.PaymentResponse, error) {
-	tt, err := strconv.ParseInt(req.TransactionTime, 10, 64)
+	var tt int64
+	var err error
+
+	// Try parsing as Unix timestamp first (string number)
+	tt, err = strconv.ParseInt(req.TransactionTime, 10, 64)
 	if err != nil {
-		return nil, errors.New("invalid transaction_time")
+		// If that fails, try parsing as ISO date string
+		if t, parseErr := time.Parse(time.RFC3339, req.TransactionTime); parseErr == nil {
+			tt = t.Unix()
+		} else {
+			// If both fail, use current time
+			tt = time.Now().Unix()
+		}
 	}
+
 	pay := &model.Payments{
 		OrderID:         req.OrderID,
 		PaymentMethod:   req.PaymentMethod,
@@ -80,10 +91,21 @@ func CreatePaymentService(ctx context.Context, req requests.PaymentCreateRequest
 }
 
 func UpdatePaymentService(ctx context.Context, id int, req requests.PaymentUpdateRequest) (*response.PaymentResponse, error) {
-	tt, err := strconv.ParseInt(req.TransactionTime, 10, 64)
+	var tt int64
+	var err error
+
+	// Try parsing as Unix timestamp first (string number)
+	tt, err = strconv.ParseInt(req.TransactionTime, 10, 64)
 	if err != nil {
-		return nil, errors.New("invalid transaction_time")
+		// If that fails, try parsing as ISO date string
+		if t, parseErr := time.Parse(time.RFC3339, req.TransactionTime); parseErr == nil {
+			tt = t.Unix()
+		} else {
+			// If both fail, use current time
+			tt = time.Now().Unix()
+		}
 	}
+
 	pay := &model.Payments{
 		ID:              id,
 		OrderID:         req.OrderID,
