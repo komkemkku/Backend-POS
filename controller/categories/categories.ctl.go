@@ -61,7 +61,7 @@ func CreateCategory(c *gin.Context) {
 }
 
 func UpdateCategory(c *gin.Context) {
-	id := requests.StaffIdRequest{}
+	id := requests.CategoryIdRequest{}
 	if err := c.BindUri(&id); err != nil {
 		response.BadRequest(c, err.Error())
 		return
