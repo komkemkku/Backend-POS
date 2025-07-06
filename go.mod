@@ -7,7 +7,6 @@ require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/jackc/pgx/v5 v5.7.5
-	github.com/joho/godotenv v1.5.1
 	github.com/spf13/cobra v1.9.1
 	github.com/uptrace/bun v1.2.14
 	github.com/uptrace/bun/dialect/pgdialect v1.2.14

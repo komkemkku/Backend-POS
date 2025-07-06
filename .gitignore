@@ -1,1 +1,71 @@
+# Environment files
 .env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+go.work.sum
+
+# Vendor directory (dependencies)
+/vendor/
+
+# Build artifacts
+/dist/
+/build/
+main
+pos-server
+Backend-POS
+Backend-POS.exe
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+/tmp/
+/temp/
+
+# Coverage reports
+*.coverprofile
+coverage.html
+coverage.out
+
+# Railway specific
+.railway/
+
+# Air (hot reload) temporary files
+/tmp/
+
+# Git workflow files
+.git/hooks/

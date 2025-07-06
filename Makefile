@@ -41,8 +41,16 @@ auto-deploy:
 	@echo "🚀 Running auto-deploy..."
 	./auto-deploy.sh
 
+# Auto deploy for Windows (PowerShell)
+auto-deploy-win:
+	@echo "🚀 Running auto-deploy (Windows)..."
+	powershell -ExecutionPolicy Bypass -File ./auto-deploy.ps1
+
 # Deploy alias
 deploy: auto-deploy
+
+# Deploy for Windows
+deploy-win: auto-deploy-win
 
 # Setup development environment
 setup:
@@ -61,8 +69,10 @@ help:
 	@echo "  make deps        - Install dependencies"
 	@echo "  make test        - Run tests"
 	@echo "  make clean       - Clean build artifacts"
-	@echo "  make deploy      - Auto commit & push changes"
+	@echo "  make deploy      - Auto commit & push changes (Linux/Mac)"
+	@echo "  make deploy-win  - Auto commit & push changes (Windows)"
 	@echo "  make auto-deploy - Same as deploy"
+	@echo "  make auto-deploy-win - Same as deploy-win"
 	@echo "  make setup       - Setup development environment"
 	@echo "  make help        - Show this help"
 
