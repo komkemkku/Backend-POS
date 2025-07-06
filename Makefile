@@ -36,6 +36,11 @@ clean:
 	rm -f main
 	go clean
 
+# Deep clean (Windows)
+cleanup:
+	@echo "🧹 Running deep cleanup..."
+	powershell -ExecutionPolicy Bypass -File ./cleanup.ps1
+
 # Auto deploy (commit + push)
 auto-deploy:
 	@echo "🚀 Running auto-deploy..."
@@ -45,6 +50,11 @@ auto-deploy:
 auto-deploy-win:
 	@echo "🚀 Running auto-deploy (Windows)..."
 	powershell -ExecutionPolicy Bypass -File ./auto-deploy.ps1
+
+# Auto watch and deploy (Windows)
+watch-deploy:
+	@echo "🔍 Starting auto-watch for changes..."
+	powershell -ExecutionPolicy Bypass -File ./auto-watch.ps1
 
 # Deploy alias
 deploy: auto-deploy
@@ -69,8 +79,10 @@ help:
 	@echo "  make deps        - Install dependencies"
 	@echo "  make test        - Run tests"
 	@echo "  make clean       - Clean build artifacts"
+	@echo "  make cleanup     - Deep clean (remove all unnecessary files)"
 	@echo "  make deploy      - Auto commit & push changes (Linux/Mac)"
 	@echo "  make deploy-win  - Auto commit & push changes (Windows)"
+	@echo "  make watch-deploy- Auto-watch files and deploy on changes"
 	@echo "  make auto-deploy - Same as deploy"
 	@echo "  make auto-deploy-win - Same as deploy-win"
 	@echo "  make setup       - Setup development environment"
