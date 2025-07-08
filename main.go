@@ -20,9 +20,15 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// โหลดไฟล์ .env สำหรับการพัฒนาในเครื่อง
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found or error loading .env file:", err)
+	}
+
 	if len(os.Args) > 1 {
 		cmd.Execute()
 		os.Exit(0)

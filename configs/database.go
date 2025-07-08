@@ -74,7 +74,7 @@ func defaultConfig() (*bun.DB, error) {
 		TimeZone: "Asia/Bangkok",
 	}
 
-	op.Dsn = fmt.Sprintf("host=%s port=%d dbname=%s user=%s password=%s sslmode=disable TimeZone=%s", op.Host, op.Port, op.Database, op.Username, op.Password, op.TimeZone)
+	op.Dsn = fmt.Sprintf("host=%s port=%d dbname=%s user=%s password=%s sslmode=require TimeZone=%s", op.Host, op.Port, op.Database, op.Username, op.Password, op.TimeZone)
 
 	config, err := pgx.ParseConfig(op.Dsn)
 	if err != nil {
