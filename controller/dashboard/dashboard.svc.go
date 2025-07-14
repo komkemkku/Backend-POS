@@ -12,30 +12,25 @@ var db = config.Database()
 func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummaryResponse, error) {
 	summary := &response.DashboardSummaryResponse{}
 
-	// Get total tables
 	totalTables, err := db.NewSelect().
 		Table("tables").
 		Count(ctx)
 	if err != nil {
-		// If database error, use mock data
 		totalTables = 20
 	}
 	summary.TotalTables = totalTables
 
-	// Mock data for now (since database schema might not match)
 	summary.TodayRevenue = 15240.50
 	summary.TodayOrders = 48
 	summary.PendingOrders = 5
 	summary.TodayCustomers = 124
 	summary.AvgOrderTime = 25
 
-	// เพิ่มข้อมูลสำหรับคำนวณเปอร์เซ็นต์การเปลี่ยนแปลง
 	summary.YesterdayRevenue = 13567.80
 	summary.YesterdayOrders = 44
 	summary.YesterdayCustomers = 128
 	summary.LastWeekAvgTime = 27
 
-	// ข้อมูลกราฟยอดขาย (mock data)
 	summary.SalesChart = response.SalesChartResponse{
 		SevenDays: response.ChartDataResponse{
 			Labels: []string{"จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์", "อาทิตย์"},
@@ -51,7 +46,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 		},
 	}
 
-	// Popular items (mock data)
 	summary.PopularItems = []response.PopularItemResponse{
 		{ID: 1, Name: "ผัดไทย", Category: "อาหารจานหลัก", Sold: 25, Revenue: 1500},
 		{ID: 2, Name: "ต้มยำกุ้ง", Category: "อาหารจานหลัก", Sold: 18, Revenue: 2700},
@@ -59,7 +53,6 @@ func GetDashboardSummaryService(ctx context.Context) (*response.DashboardSummary
 		{ID: 4, Name: "ส้มตำ", Category: "อาหารเรียกน้ำย่อย", Sold: 12, Revenue: 600},
 	}
 
-	// Recent orders (mock data)
 	now := time.Now().Unix()
 	summary.RecentOrders = []response.RecentOrderResponse{
 		{ID: 123, TableNumber: 5, TotalAmount: 450, Status: "pending", CreatedAt: now - 300},

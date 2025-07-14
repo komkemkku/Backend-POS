@@ -11,18 +11,18 @@ type OrderIdRequest struct {
 }
 
 type OrderCreateRequest struct {
-	TableID     int    `json:"table_id"`
-	StaffID     int    `json:"staff_id"`
-	Status      string `json:"status"`
-	TotalAmount float64    `json:"total_amount"`
+	TableID     int     `json:"table_id"`
+	StaffID     int     `json:"staff_id"`
+	Status      string  `json:"status"`
+	TotalAmount float64 `json:"total_amount"`
 }
 
 type OrderUpdateRequest struct {
-	ID          int    `json:"id"`
-	TableID     int    `json:"table_id"`
-	StaffID     int    `json:"staff_id"`
-	Status      string `json:"status"`
-	TotalAmount float64    `json:"total_amount"`
+	ID          int     `json:"id"`
+	TableID     int     `json:"table_id"`
+	StaffID     int     `json:"staff_id"`
+	Status      string  `json:"status"`
+	TotalAmount float64 `json:"total_amount"`
 }
 
 type OrderDeleteRequest struct {

@@ -65,14 +65,11 @@ func CreatePaymentService(ctx context.Context, req requests.PaymentCreateRequest
 	var tt int64
 	var err error
 
-	// Try parsing as Unix timestamp first (string number)
 	tt, err = strconv.ParseInt(req.TransactionTime, 10, 64)
 	if err != nil {
-		// If that fails, try parsing as ISO date string
 		if t, parseErr := time.Parse(time.RFC3339, req.TransactionTime); parseErr == nil {
 			tt = t.Unix()
 		} else {
-			// If both fail, use current time
 			tt = time.Now().Unix()
 		}
 	}
@@ -94,14 +91,11 @@ func UpdatePaymentService(ctx context.Context, id int, req requests.PaymentUpdat
 	var tt int64
 	var err error
 
-	// Try parsing as Unix timestamp first (string number)
 	tt, err = strconv.ParseInt(req.TransactionTime, 10, 64)
 	if err != nil {
-		// If that fails, try parsing as ISO date string
 		if t, parseErr := time.Parse(time.RFC3339, req.TransactionTime); parseErr == nil {
 			tt = t.Unix()
 		} else {
-			// If both fail, use current time
 			tt = time.Now().Unix()
 		}
 	}

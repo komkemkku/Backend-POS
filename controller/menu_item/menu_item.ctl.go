@@ -96,21 +96,16 @@ func DeleteMenuItem(c *gin.Context) {
 	response.Success(c, "Delete successfully")
 }
 
-// PublicListMenuItems สำหรับลูกค้าดูเมนูทั้งหมด (public - ไม่ต้อง auth)
 func PublicListMenuItems(c *gin.Context) {
 	var req requests.MenuItemRequest
-	// ตั้งค่า default สำหรับ public (ดูทั้งหมด)
 	req.Page = 1
-	req.Size = 1000 // จำนวนมากพอที่จะดูทั้งหมด
+	req.Size = 1000
 
-	// รับ query parameters ถ้ามี
 	if err := c.ShouldBindQuery(&req); err != nil {
-		// ถ้า bind ไม่ได้ ใช้ค่า default
 		req.Page = 1
 		req.Size = 1000
 	}
 
-	// ดึงเฉพาะเมนูที่พร้อมใช้งาน
 	data, total, err := PublicListMenuItemService(c.Request.Context(), req)
 	if err != nil {
 		response.InternalError(c, err.Error())

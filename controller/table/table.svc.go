@@ -98,12 +98,11 @@ func DeleteTableService(ctx context.Context, id int) error {
 	return err
 }
 
-// PublicGetMenuByQrCodeService ดึงเมนูอาหารสำหรับลูกค้าที่สแกน QR Code โต๊ะ (public)
 func PublicGetMenuByQrCodeService(ctx context.Context, qrCodeIdentifier string) (*response.PublicMenuResponse, error) {
 	var table model.Tables
 	err := db.NewSelect().Model(&table).Where("qr_code_identifier = ?", qrCodeIdentifier).Scan(ctx)
 	if err != nil {
-		return nil, err // ไม่พบโต๊ะ
+		return nil, err
 	}
 
 	var menus []model.MenuItems

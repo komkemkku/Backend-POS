@@ -34,7 +34,6 @@ func ListExpenseService(ctx context.Context, req requests.ExpenseRequest) ([]res
 
 	var temp []ExpenseWithStaffFlat
 
-	// สร้าง query
 	query := db.NewSelect().
 		TableExpr("expenses AS e").
 		Column(
@@ -87,7 +86,6 @@ func GetByIdExpenseService(ctx context.Context, ID int) (*response.ExpenseRespon
 		return nil, errors.New("expenses not found")
 	}
 
-	// Struct สำหรับรับค่าจาก DB (flat)
 	type ExpenseWithStaffFlat struct {
 		ID            int
 		Description   string
@@ -103,7 +101,6 @@ func GetByIdExpenseService(ctx context.Context, ID int) (*response.ExpenseRespon
 
 	var temp ExpenseWithStaffFlat
 
-	// สร้าง query
 	err = db.NewSelect().
 		TableExpr("expenses AS e").
 		Column(
@@ -111,13 +108,12 @@ func GetByIdExpenseService(ctx context.Context, ID int) (*response.ExpenseRespon
 		).
 		ColumnExpr("s.id AS staff_id, s.username AS staff_username, s.full_name AS staff_full_name, s.role AS staff_role").
 		Join("LEFT JOIN staff s ON e.staff_id = s.id").
-		Where("e.id = ?", ID). // ต้องระบุ table alias "e.id"
+		Where("e.id = ?", ID).
 		Scan(ctx, &temp)
 	if err != nil {
 		return nil, err
 	}
 
-	// Map ไป struct response ที่ nested
 	expense := &response.ExpenseResponses{
 		ID:          temp.ID,
 		Description: temp.Description,
@@ -158,7 +154,6 @@ func CreateExpenseService(ctx context.Context, req requests.ExpenseCreateRequest
 }
 
 func UpdateExpenseService(ctx context.Context, ID int, req requests.ExpenseUpdateRequest) (*response.ExpenseResponses, error) {
-	// 1. Check ว่า expense มีจริง
 	ex, err := db.NewSelect().Table("expenses").Where("id = ?", ID).Exists(ctx)
 	if err != nil {
 		return nil, err
@@ -167,7 +162,6 @@ func UpdateExpenseService(ctx context.Context, ID int, req requests.ExpenseUpdat
 		return nil, errors.New("expense not found")
 	}
 
-	// 2. Prepare struct สำหรับ update
 	expense := &model.Expenses{
 		ID:          ID,
 		Description: req.Description,
@@ -178,18 +172,15 @@ func UpdateExpenseService(ctx context.Context, ID int, req requests.ExpenseUpdat
 	}
 	expense.SetCreatedNow()
 
-	// 3. Update ข้อมูล
 	_, err = db.NewUpdate().Model(expense).WherePK().Exec(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	// 4. Return รายการล่าสุด (join ข้อมูล staff ด้วย)
 	return GetByIdExpenseService(ctx, ID)
 }
 
 func DeleteExpenseService(ctx context.Context, ID int) error {
-	// 1. ตรวจสอบว่า expense มีจริงไหม
 	ex, err := db.NewSelect().Model((*model.Expenses)(nil)).Where("id = ?", ID).Exists(ctx)
 	if err != nil {
 		return err
@@ -198,7 +189,6 @@ func DeleteExpenseService(ctx context.Context, ID int) error {
 		return errors.New("expense not found")
 	}
 
-	// 2. ลบข้อมูล
 	_, err = db.NewDelete().Model((*model.Expenses)(nil)).Where("id = ?", ID).Exec(ctx)
 	if err != nil {
 		return err

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"Backend-POS/utils/jwt"
+	"github.com/gin-gonic/gin"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -31,8 +31,8 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		type staff struct {
-			ID       int    `json:"id"`
-			Username string `json:"username"`
+			ID           int    `json:"id"`
+			Username     string `json:"username"`
 			PasswordHash string `json:"password_hash"`
 		}
 

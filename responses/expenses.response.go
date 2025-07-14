@@ -5,7 +5,7 @@ type ExpenseResponses struct {
 	Description string                `json:"description"`
 	Amount      float64               `json:"amount"`
 	Category    string                `json:"category"`
-	ExpenseDate string                `json:"expense_date"` // ถ้าอยากให้เป็น int เปลี่ยนตรงนี้
+	ExpenseDate string                `json:"expense_date"`
 	CreatedAt   int64                 `json:"created_at"`
 	StaffID     StaffExpenseResponses `json:"staff"`
 }

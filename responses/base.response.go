@@ -59,32 +59,30 @@ func Success(ctx *gin.Context, data any) {
 	}, data})
 }
 
-// InternalError ส่งผลลัพธ์เมื่อมีข้อผิดพลาดภายใน
 func InternalError(ctx *gin.Context, message any, payloadCode ...string) {
 	ctx.JSON(http.StatusInternalServerError, StatusResponse{
 		Code:    500,
-		Message: message.(string), // Set the message directly here
+		Message: message.(string),
 	})
 }
 
 func NotFound(ctx *gin.Context, message any, payloadCode ...string) {
 	ctx.JSON(http.StatusNotFound, StatusResponse{
 		Code:    404,
-		Message: message.(string), // Set the message directly here
+		Message: message.(string),
 	})
 }
 
-// BadRequest ส่งผลลัพธ์เมื่อมีข้อผิดพลาดจากการขอข้อมูลที่ไม่ถูกต้อง
 func BadRequest(ctx *gin.Context, message any, payloadCode ...string) {
 	ctx.JSON(http.StatusBadRequest, StatusResponse{
 		Code:    400,
-		Message: message.(string), // Set the message directly here
+		Message: message.(string),
 	})
 }
 
 func Unauthorized(ctx *gin.Context, message any, payloadCode ...string) {
 	ctx.JSON(http.StatusInternalServerError, StatusResponse{
 		Code:    401,
-		Message: message.(string), // Set the message directly here
+		Message: message.(string),
 	})
 }

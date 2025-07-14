@@ -65,7 +65,6 @@ func CreateExpense(c *gin.Context) {
 func UpdateExpense(c *gin.Context) {
 	staff := c.GetInt("staff_id")
 
-	// รับ id จาก url param
 	var uri struct {
 		ID int `uri:"id" binding:"required"`
 	}

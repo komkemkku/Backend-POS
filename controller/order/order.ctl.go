@@ -58,7 +58,6 @@ func CreateOrder(c *gin.Context) {
 	response.Success(c, data)
 }
 
-// PublicCreateOrder สำหรับลูกค้าสร้างออเดอร์ (public - ไม่ต้อง auth)
 func PublicCreateOrder(c *gin.Context) {
 	var req requests.PublicOrderCreateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -111,7 +110,6 @@ func DeleteOrder(c *gin.Context) {
 	response.Success(c, "Delete Success")
 }
 
-// PublicGetOrdersByTable สำหรับลูกค้าดูประวัติออเดอร์ตามโต๊ะ (public)
 func PublicGetOrdersByTable(c *gin.Context) {
 	qrCode := c.Param("qrCodeIdentifier")
 	data, err := PublicGetOrdersByTableService(c.Request.Context(), qrCode)
@@ -122,7 +120,6 @@ func PublicGetOrdersByTable(c *gin.Context) {
 	response.Success(c, data)
 }
 
-// PublicGetOrderStatus สำหรับลูกค้าดูสถานะออเดอร์เฉพาะ (public)
 func PublicGetOrderStatus(c *gin.Context) {
 	orderIDParam := c.Param("orderID")
 	orderID, err := strconv.Atoi(orderIDParam)
@@ -140,7 +137,6 @@ func PublicGetOrderStatus(c *gin.Context) {
 	response.Success(c, data)
 }
 
-// PublicGetAllOrderHistory สำหรับดูประวัติออเดอร์ทั้งหมด (รวมที่ชำระแล้ว)
 func PublicGetAllOrderHistory(c *gin.Context) {
 	qrCode := c.Param("qrCodeIdentifier")
 	data, err := PublicGetAllOrderHistoryService(c.Request.Context(), qrCode)
@@ -151,9 +147,8 @@ func PublicGetAllOrderHistory(c *gin.Context) {
 	response.Success(c, data)
 }
 
-// PublicClearTableHistory สำหรับล้างประวัติหลังชำระเงิน (สำหรับ staff)
 func PublicClearTableHistory(c *gin.Context) {
-	staffID := c.GetInt("staff_id") // จาก middleware
+	staffID := c.GetInt("staff_id")
 	qrCode := c.Param("qrCodeIdentifier")
 
 	err := PublicClearTableHistoryService(c.Request.Context(), qrCode, staffID)
@@ -164,7 +159,6 @@ func PublicClearTableHistory(c *gin.Context) {
 	response.Success(c, "ล้างประวัติโต๊ะเรียบร้อยแล้ว")
 }
 
-// PublicGetTableSummary สำหรับดูสรุปโต๊ะ
 func PublicGetTableSummary(c *gin.Context) {
 	qrCode := c.Param("qrCodeIdentifier")
 	data, err := PublicGetTableSummaryService(c.Request.Context(), qrCode)
@@ -175,13 +169,12 @@ func PublicGetTableSummary(c *gin.Context) {
 	response.Success(c, data)
 }
 
-// AdvancedClearTableHistory สำหรับล้างประวัติแบบละเอียด
 func AdvancedClearTableHistory(c *gin.Context) {
 	qrCode := c.Param("qrCodeIdentifier")
-	clearType := c.Query("type") // payment, cancel_all, complete_all
+	clearType := c.Query("type")
 
 	if clearType == "" {
-		clearType = "payment" // default
+		clearType = "payment"
 	}
 
 	staffID, exists := c.Get("staffID")
@@ -198,7 +191,6 @@ func AdvancedClearTableHistory(c *gin.Context) {
 	response.Success(c, data)
 }
 
-// CancelSpecificOrder สำหรับยกเลิกออเดอร์เฉพาะ
 func CancelSpecificOrder(c *gin.Context) {
 	orderIDStr := c.Param("orderID")
 	qrCode := c.Param("qrCodeIdentifier")
@@ -224,7 +216,6 @@ func CancelSpecificOrder(c *gin.Context) {
 	response.Success(c, "ยกเลิกออเดอร์เรียบร้อยแล้ว")
 }
 
-// UpdateOrderStatus สำหรับอัปเดตสถานะออเดอร์
 func UpdateOrderStatus(c *gin.Context) {
 	orderIDStr := c.Param("orderID")
 	var req struct {

@@ -19,7 +19,6 @@ func ListOrderItemService(ctx context.Context, req requests.OrderItemRequest) ([
 	var orderItems []model.OrderItems
 	query := db.NewSelect().Model(&orderItems)
 
-	// Filter
 	if req.Search != "" {
 		query = query.Where("notes ILIKE ?", "%"+req.Search+"%")
 	}
@@ -34,7 +33,6 @@ func ListOrderItemService(ctx context.Context, req requests.OrderItemRequest) ([
 		return nil, 0, err
 	}
 
-	// แปลงเป็น response และคำนวณ SubTotal
 	resp := make([]response.OrderItemResponses, len(orderItems))
 	for i, item := range orderItems {
 		resp[i] = response.OrderItemResponses{
@@ -43,7 +41,7 @@ func ListOrderItemService(ctx context.Context, req requests.OrderItemRequest) ([
 			MenuItemID:   item.MenuItemID,
 			Quantity:     item.Quantity,
 			PricePerItem: item.PricePerItem,
-			SubTotal:     item.PricePerItem * float64(item.Quantity), // คำนวณ SubTotal
+			SubTotal:     item.PricePerItem * float64(item.Quantity),
 			Notes:        item.Notes,
 			CreatedAt:    item.CreatedAt,
 			UpdatedAt:    item.UpdatedAt,
@@ -66,7 +64,7 @@ func GetOrderItemByIdService(ctx context.Context, id int) (*response.OrderItemRe
 		MenuItemID:   item.MenuItemID,
 		Quantity:     item.Quantity,
 		PricePerItem: item.PricePerItem,
-		SubTotal:     item.PricePerItem * float64(item.Quantity), // คำนวณ SubTotal
+		SubTotal:     item.PricePerItem * float64(item.Quantity),
 		Notes:        item.Notes,
 		CreatedAt:    item.CreatedAt,
 		UpdatedAt:    item.UpdatedAt,

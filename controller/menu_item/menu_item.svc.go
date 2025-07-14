@@ -40,7 +40,6 @@ func ListMenuItemService(ctx context.Context, req requests.MenuItemRequest) ([]r
 	return resp, total, nil
 }
 
-// PublicListMenuItemService สำหรับลูกค้า - ดึงเฉพาะเมนูที่พร้อมใช้งาน
 func PublicListMenuItemService(ctx context.Context, req requests.MenuItemRequest) ([]response.MenuItemResponses, int, error) {
 	var Offset int64
 	if req.Page > 0 {
@@ -52,7 +51,7 @@ func PublicListMenuItemService(ctx context.Context, req requests.MenuItemRequest
 	query := db.NewSelect().
 		TableExpr("menu_items AS m").
 		Column("m.id", "m.category_id", "m.name", "m.description", "m.price", "m.image_url", "m.is_available", "m.created_at", "m.updated_at").
-		Where("m.is_available = ?", true) // เฉพาะเมนูที่พร้อมใช้งาน
+		Where("m.is_available = ?", true)
 
 	if req.Search != "" {
 		query = query.Where("m.name ILIKE ?", "%"+req.Search+"%")
@@ -123,7 +122,6 @@ func UpdateMenuItemService(ctx context.Context, id int, req requests.MenuItemUpd
 	if err != nil {
 		return nil, err
 	}
-	// ดึงข้อมูลล่าสุด
 	return GetMenuItemByIDService(ctx, id)
 }
 

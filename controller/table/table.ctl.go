@@ -68,7 +68,6 @@ func UpdateTable(c *gin.Context) {
 		response.BadRequest(c, "ต้องระบุ id")
 		return
 	}
-	// แปลง id จาก param เป็น int ถ้ามี
 	if idParam != "" {
 		id, err := strconv.Atoi(idParam)
 		if err != nil {
@@ -104,7 +103,6 @@ func DeleteTable(c *gin.Context) {
 	response.Success(c, "Delete Success")
 }
 
-// PublicMenuByQrCode สำหรับลูกค้าที่สแกน QR Code โต๊ะ (public)
 func PublicMenuByQrCode(c *gin.Context) {
 	qrCode := c.Param("qrCodeIdentifier")
 	data, err := PublicGetMenuByQrCodeService(c.Request.Context(), qrCode)

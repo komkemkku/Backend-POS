@@ -60,31 +60,3 @@ func GenerateTokenStaff(ctx context.Context, staff *model.Staff) (string, error)
 	}
 	return tokenString, nil
 }
-
-// func GenerateTokenAdmin(ctx context.Context, admin *model.Admins) (string, error) {
-// 	godotenv.Load()
-// 	tokenDurationStr := os.Getenv("TOKEN_DURATION")
-// 	tokenDuration, err := time.ParseDuration(tokenDurationStr)
-// 	if err != nil {
-// 		log.Printf("[error]: %v", err)
-// 		return "", err
-// 	}
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-
-// 		"sub": jwt.MapClaims{
-// 			"id":       admin.ID,
-// 			"name":     admin.Name,
-// 			"password": admin.Password,
-// 		},
-// 		"nbf": time.Now().Unix(),
-// 		"exp": time.Now().Add(tokenDuration).Unix(),
-// 	})
-
-// 	secret := []byte(os.Getenv("TOKEN_SECRET"))
-// 	tokenString, err := token.SignedString(secret)
-// 	if err != nil {
-// 		log.Printf("[error]: %v", err)
-// 		return "", err
-// 	}
-// 	return tokenString, nil
-// }

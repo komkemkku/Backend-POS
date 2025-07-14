@@ -3,11 +3,10 @@ package model
 import "time"
 
 type Paginate struct {
-	Page       int64
-	Size       int64
-	Total      int64
+	Page  int64
+	Size  int64
+	Total int64
 }
-
 
 type CreateUpdateUnixTimestamp struct {
 	CreateUnixTimestamp
@@ -21,10 +20,6 @@ type CreateUnixTimestamp struct {
 type UpdateUnixTimestamp struct {
 	UpdatedAt int64 `json:"updated_at" bun:",notnull,default:EXTRACT(EPOCH FROM NOW())"`
 }
-
-// type SoftDelete struct {
-// 	DeletedAt *time.Time `json:"deleted_at" bun:",soft_delete,nullzero"`
-// }
 
 type SoftDelete struct {
 	DeletedAt int64 `json:"deleted_at" bun:",soft_delete,nullzero"`

@@ -4,11 +4,11 @@ import "github.com/uptrace/bun"
 
 type Orders struct {
 	bun.BaseModel `bun:"table:orders"`
-	ID            int     `bun:",type:serial,autoincrement,pk"` // Unique
-	TableID       int     `bun:"table_id"`                      // Foreign key to Table table
-	StaffID       int     `bun:"staff_id"`                      // Foreign key to Staff table
-	Status        string  `bun:"status"`                        // e.g., "pending", "completed", "cancelled"
-	TotalAmount   float64 `bun:"total_amount"`                  // Total price of the order
+	ID            int     `bun:",type:serial,autoincrement,pk"`
+	TableID       int     `bun:"table_id"`
+	StaffID       int     `bun:"staff_id"`
+	Status        string  `bun:"status"`
+	TotalAmount   float64 `bun:"total_amount"`
 
 	CreateUnixTimestamp
 	UpdateUnixTimestamp

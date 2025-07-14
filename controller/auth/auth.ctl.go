@@ -28,7 +28,6 @@ func LoginStaff(c *gin.Context) {
 		return
 	}
 
-	// Response ตาม format ที่กำหนด
 	responseData := gin.H{
 		"token": token,
 		"staff": gin.H{

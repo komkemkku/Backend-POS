@@ -21,7 +21,6 @@ func ListStaffService(ctx context.Context, req requests.StaffRequest) ([]respons
 
 	resp := []response.StaffResponses{}
 
-	// สร้าง query
 	query := db.NewSelect().
 		TableExpr("staff AS s ").
 		Column("s.id", "s.username", "s.full_name", "s.role", "s.created_at", "s.updated_at")
@@ -36,7 +35,6 @@ func ListStaffService(ctx context.Context, req requests.StaffRequest) ([]respons
 		return nil, 0, err
 	}
 
-	// Execute query
 	err = query.OrderExpr("s.created_at DESC").Offset(int(Offset)).Limit(int(req.Size)).Scan(ctx, &resp)
 	if err != nil {
 		return nil, 0, err
@@ -56,7 +54,6 @@ func GetByIdStaffService(ctx context.Context, ID int) (*response.StaffResponses,
 
 	staff := &response.StaffResponses{}
 
-	// สร้าง query
 	err = db.NewSelect().
 		TableExpr("staff AS s ").
 		Column("s.id", "s.username", "s.full_name", "s.role", "s.created_at", "s.updated_at").
@@ -75,7 +72,6 @@ func CreateStaffService(ctx context.Context, req requests.StaffCreateRequest) (*
 		return nil, errors.New("username, full_name and role are required")
 	}
 
-	// ตรวจสอบว่า username มีอยู่แล้วหรือไม่
 	exists, err := db.NewSelect().Table("staff").Where("username = ?", req.Username).Exists(ctx)
 	if err != nil {
 		return nil, err
@@ -107,14 +103,12 @@ func UpdateStaffService(ctx context.Context, id int, req requests.StaffUpdateReq
 		return nil, errors.New("username, full_name and role are required")
 	}
 
-	// หา record staff เดิมก่อน
 	staff := new(model.Staff)
 	err := db.NewSelect().Model(staff).Where("id = ?", id).Scan(ctx)
 	if err != nil {
 		return nil, errors.New("staff not found")
 	}
 
-	// ตรวจ username ซ้ำ (แต่ต้องยกเว้น user เดิม)
 	exists, err := db.NewSelect().
 		Model((*model.Staff)(nil)).
 		Where("username = ? AND id != ?", req.Username, id).
@@ -126,7 +120,6 @@ func UpdateStaffService(ctx context.Context, id int, req requests.StaffUpdateReq
 		return nil, errors.New("username already exists")
 	}
 
-	// ถ้ามีการส่ง password ใหม่มาให้ hash ใหม่
 	if req.PasswordHash != "" {
 		hashpassword, _ := utils.HashPassword(req.PasswordHash)
 		staff.PasswordHash = hashpassword
@@ -134,7 +127,7 @@ func UpdateStaffService(ctx context.Context, id int, req requests.StaffUpdateReq
 	staff.UserName = req.Username
 	staff.FullName = req.FullName
 	staff.Role = req.Role
-	staff.SetUpdateNow() 
+	staff.SetUpdateNow()
 
 	_, err = db.NewUpdate().Model(staff).
 		Where("id = ?", id).

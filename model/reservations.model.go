@@ -11,7 +11,7 @@ type Reservations struct {
 	ReservationTime int64  `bun:"reservation_time"`
 	NumberOfGuests  int    `bun:"number_of_guests"`
 	Status          string `bun:"status"`
-	Notes           string `bun:"notes"` // Additional notes for the reservation
+	Notes           string `bun:"notes"`
 
 	CreateUnixTimestamp
 }

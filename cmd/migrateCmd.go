@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Migrate Command
 func Migrate() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "migrate",

@@ -14,7 +14,7 @@ type PaymentCreateRequest struct {
 	OrderID         int     `json:"order_id"`
 	PaymentMethod   string  `json:"payment_method"`
 	AmountPaid      float64 `json:"amount_paid"`
-	TransactionTime string  `json:"transaction_time"` // ใช้ string เพื่อรับ input (ต้อง parse ภายหลัง)
+	TransactionTime string  `json:"transaction_time"`
 }
 
 type PaymentUpdateRequest struct {

@@ -12,7 +12,6 @@ import (
 var db = config.Database()
 
 func LoginUserService(ctx context.Context, req requests.LoginRequest) (*model.Staff, error) {
-	// ตรวจสอบว่ามี username นี้อยู่จริง
 	ex, err := db.NewSelect().TableExpr("staff").Where("username = ?", req.UserName).Exists(ctx)
 	if err != nil {
 		return nil, err
@@ -24,13 +23,11 @@ func LoginUserService(ctx context.Context, req requests.LoginRequest) (*model.St
 
 	staff := &model.Staff{}
 
-	// ดึงข้อมูล staff ตาม username
 	err = db.NewSelect().Model(staff).Where("username = ?", req.UserName).Scan(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	// เปรียบเทียบรหัสผ่าน (plain text vs hashed)
 	isPasswordValid := utils.CheckPasswordHash(req.Password, staff.PasswordHash)
 
 	if !isPasswordValid {
